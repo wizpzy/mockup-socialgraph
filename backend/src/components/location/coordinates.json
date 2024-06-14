@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_location_coordinates",
+  "info": {
+    "displayName": "Coordinates",
+    "icon": "pinMap"
+  },
+  "options": {},
+  "attributes": {
+    "Coor_lat": {
+      "type": "float",
+      "required": true
+    },
+    "Coor_long": {
+      "type": "float",
+      "required": true
+    }
+  }
+}

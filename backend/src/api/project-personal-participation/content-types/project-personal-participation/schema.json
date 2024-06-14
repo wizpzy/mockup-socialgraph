@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "project_personal_participations",
+  "info": {
+    "singularName": "project-personal-participation",
+    "pluralName": "project-personal-participations",
+    "displayName": "Project_Personal_Participation"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "Projects"
+    },
+    "Project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "Workmen"
+    },
+    "Responsibility": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

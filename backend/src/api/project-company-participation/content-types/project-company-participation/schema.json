@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "project_company_participations",
+  "info": {
+    "singularName": "project-company-participation",
+    "pluralName": "project-company-participations",
+    "displayName": "Project_Company_Participation"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Company": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::company.company",
+      "inversedBy": "Projects"
+    },
+    "Project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "Companies"
+    }
+  }
+}
