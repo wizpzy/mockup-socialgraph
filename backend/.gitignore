@@ -70,7 +70,15 @@ $RECYCLE.BIN/
 *.sql
 *.sqlite
 *.sqlite3
-
+# Ignore MySQL socket file and other temporary files
+data/mysql.sock
+data/*.pid
+data/*.err
+data/*.log
+data/ib_logfile*
+data/ibdata*
+data/#sql*
+data/#innodb*
 
 ############################
 # Misc.
@@ -80,7 +88,7 @@ $RECYCLE.BIN/
 ssl
 .idea
 nbproject
-public/uploads/*
+!public/uploads/*
 !public/uploads/.gitkeep
 
 ############################
