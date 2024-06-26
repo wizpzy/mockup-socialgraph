@@ -4,7 +4,8 @@
   "info": {
     "singularName": "university",
     "pluralName": "universities",
-    "displayName": "University"
+    "displayName": "University",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,17 +17,18 @@
       "required": true
     },
     "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "Location": {
       "type": "component",
       "repeatable": false,
       "component": "location.coordinates",
-      "required": true
+      "required": false
     },
     "Student_records": {
       "type": "relation",

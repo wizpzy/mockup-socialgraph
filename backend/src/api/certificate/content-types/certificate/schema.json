@@ -24,12 +24,6 @@
     },
     "Description": {
       "type": "text"
-    },
-    "Education": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::education.education",
-      "mappedBy": "Certificate"
     }
   }
 }

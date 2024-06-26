@@ -36,6 +36,12 @@
       "relation": "oneToMany",
       "target": "api::project-personal-participation.project-personal-participation",
       "mappedBy": "Project"
+    },
+    "Category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project-category.project-category",
+      "inversedBy": "Projects"
     }
   }
 }

@@ -32,12 +32,6 @@
     },
     "Major": {
       "type": "string"
-    },
-    "Certificate": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::certificate.certificate",
-      "inversedBy": "Education"
     }
   }
 }

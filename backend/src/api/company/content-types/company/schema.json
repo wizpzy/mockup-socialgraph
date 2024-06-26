@@ -43,6 +43,12 @@
       "relation": "oneToMany",
       "target": "api::project-company-participation.project-company-participation",
       "mappedBy": "Company"
+    },
+    "Industry": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::industry.industry",
+      "inversedBy": "Companies"
     }
   }
 }

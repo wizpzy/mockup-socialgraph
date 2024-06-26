@@ -4,7 +4,8 @@
   "info": {
     "singularName": "project-company-participation",
     "pluralName": "project-company-participations",
-    "displayName": "Project_Company_Participation"
+    "displayName": "Project_Company_Participation",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -22,6 +23,11 @@
       "relation": "manyToOne",
       "target": "api::project.project",
       "inversedBy": "Companies"
+    },
+    "Highlight_Flag": {
+      "type": "boolean",
+      "default": true,
+      "required": true
     }
   }
 }
