@@ -27,10 +27,10 @@
     "Graduated_Year": {
       "type": "date"
     },
-    "Degree": {
+    "Major": {
       "type": "string"
     },
-    "Major": {
+    "Degree": {
       "type": "string"
     }
   }

@@ -35,6 +35,9 @@
       "relation": "oneToMany",
       "target": "api::education.education",
       "mappedBy": "University"
+    },
+    "Description": {
+      "type": "text"
     }
   }
 }

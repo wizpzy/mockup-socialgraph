@@ -4,7 +4,8 @@
   "info": {
     "singularName": "project-personal-participation",
     "pluralName": "project-personal-participations",
-    "displayName": "Project_Personal_Participation"
+    "displayName": "Project_Personal_Participation",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -25,7 +26,7 @@
     },
     "Responsibility": {
       "type": "string",
-      "required": true
+      "required": false
     }
   }
 }

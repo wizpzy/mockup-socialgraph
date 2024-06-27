@@ -4,7 +4,8 @@
   "info": {
     "singularName": "work-experience",
     "pluralName": "work-experiences",
-    "displayName": "Work_Experience"
+    "displayName": "Work_Experience",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -33,6 +34,9 @@
     "Position": {
       "type": "string",
       "required": true
+    },
+    "Description": {
+      "type": "text"
     }
   }
 }
