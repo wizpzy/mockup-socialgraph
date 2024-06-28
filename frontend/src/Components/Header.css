@@ -4,7 +4,7 @@
     background-color: #FA4616;
     padding: 10px 20px;
     position: relative; /* Ensure the header has a positioning context */
-    z-index: 1000; /* Adjust the z-index to ensure it is above Leaflet controls */
+    z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
 }
 
 .header-content {
@@ -22,11 +22,42 @@
 .header-filters {
     display: flex;
     gap: 10px;
-  }
-  
-  .filter-dropdown {
+}
+
+.filter-dropdown {
     padding: 5px;
     border-radius: 5px;
     border: 1px solid #ccc;
-  }
+}
 
+/* Styles for the search bar */
+.header-search {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Takes up remaining space */
+    position: relative; /* Positioning context for absolute positioning */
+}
+
+.search-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Make the input round */
+    flex: 1; /* Take up remaining space */
+    background-color: rgba(255, 255, 255, 0.5); /* Transparent white background */
+    margin-right: 10px; /* Adjust margin */
+    height: 10px; /* Adjust height */
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px; /* Adjust icon position */
+    cursor: pointer;
+    border: 1px solid #ccc;
+    color: white; /* Adjust icon color */
+    font-size: 1.2rem; /* Adjust icon size */
+}
+
+/* Centering the search bar horizontally */
+.header-search {
+    justify-content: center;
+}

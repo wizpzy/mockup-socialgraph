@@ -84,6 +84,7 @@ const MapComponent = () => {
   const [sidebarContent, setSidebarContent] = useState(""); // State for sidebar content
 
   const handleMarkerClick = () => {
+    setShowSidebar(true);
     setShowCircles(!showCircles);
   };
 
@@ -172,6 +173,12 @@ const MapComponent = () => {
               selectedCircle={selectedCircle}
             />
           )}
+           {showSidebar && (
+        <Sidebar onClose={() => setShowSidebar(false)}>
+          <h3>{sidebarContent}</h3>
+          {/* Add more details or components here */}
+        </Sidebar>
+      )}
         </>
       )}
       <ZoomControl position="bottomright" />
