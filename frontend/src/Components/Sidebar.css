@@ -1,0 +1,39 @@
+/* Sidebar.css */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px; /* Adjust width as needed */
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar-header {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .close-btn {
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+  }
+  
+  .close-btn:hover {
+    color: #666;
+  }
+  
+  .sidebar-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  

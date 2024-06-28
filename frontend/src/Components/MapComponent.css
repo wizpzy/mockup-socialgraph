@@ -1,0 +1,72 @@
+/* src/MapComponent.css */
+
+
+ 
+  .tooltip-text {
+    color: #FA4616;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  
+  .custom-tooltip {
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  custom-marker {
+    position: relative;
+  }
+  
+  .outer-circle {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 68, 0, 0.401); /* Light red color with some transparency */
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .inner-circle {
+    width: 10px;
+    height: 10px;
+    background-color: #FA4616; /* Red color */
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+
+  .circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  transition: border 0.3s ease;
+}
+
+.left {
+  background-color: green;
+  left: -50px;
+  bottom: -50px;
+}
+
+.right {
+  background-color: white;
+  right: -50px;
+  bottom: -50px;
+  border: 1px solid black;
+}
+
+.top {
+  background-color: black;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.orange-overlay {
+  pointer-events: none;
+}

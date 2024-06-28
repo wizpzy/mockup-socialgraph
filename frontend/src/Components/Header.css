@@ -1,0 +1,32 @@
+/* Header.css */
+
+.header {
+    background-color: #FA4616;
+    padding: 10px 20px;
+    position: relative; /* Ensure the header has a positioning context */
+    z-index: 1000; /* Adjust the z-index to ensure it is above Leaflet controls */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    height: 45px;
+    margin-right: 20px;
+}
+
+.header-filters {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .filter-dropdown {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
