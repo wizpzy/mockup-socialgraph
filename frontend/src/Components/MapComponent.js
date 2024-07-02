@@ -138,7 +138,6 @@ const MapComponent = () => {
   return (
     
     <MapContainer center={position} zoom={zoomlv} id="map" zoomControl={false}>
-      <Header />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

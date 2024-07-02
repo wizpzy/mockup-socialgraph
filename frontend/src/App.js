@@ -3,11 +3,13 @@ import React from 'react';
 import MapComponent from './Components/MapComponent';
 import './App.css';
 import Header from './Components/Header';
+import Mapbox from './Components/Mapbox';
 
 function App() {
   return (
     <div className="App">
-      <MapComponent />
+      <Header />
+      <Mapbox />
     </div>
   );
 }
