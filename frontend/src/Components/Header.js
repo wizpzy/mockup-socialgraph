@@ -10,8 +10,8 @@ const Header = () => {
             <img src={logo} alt="Social Graph Logo" className="logo" />
              {/* Search bar */}
              <div className="header-search">
+             <IoSearchSharp className="search-icon" />
               <input type="text" placeholder="Search..." className="search-input" />
-              <IoSearchSharp className="search-icon" />
             </div>
             <div className="header-filters">
               <select className="filter-dropdown">

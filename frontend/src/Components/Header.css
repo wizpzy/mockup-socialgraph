@@ -2,57 +2,90 @@
 
 .header {
     background-color: #FA4616;
-    padding: 10px 20px;
+    width: 100%;
+    height: 90px;
     position: relative; /* Ensure the header has a positioning context */
     z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
+    align-content: center;
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    margin: 0 16px;
 }
 
 .logo {
     height: 45px;
-    margin-right: 20px;
 }
 
 .header-filters {
     display: flex;
-    gap: 10px;
+    width: 445;
+    height: 48;
+    gap: 15px;
 }
 
+
 .filter-dropdown {
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding:10px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    width: 215px;
+    justify-content: start;
+    align-items: center;
+    display : flex;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px ;
+    font-weight: 500;
+    color: #FA4616;
 }
+
+.filter-dropdown option {
+    font-size: 13px;
+    font-weight: 400;
+    color: black;
+    font-family: "Poppins", sans-serif;
+}
+
 
 /* Styles for the search bar */
 .header-search {
     display: flex;
     align-items: center;
-    flex: 1; /* Takes up remaining space */
-    position: relative; /* Positioning context for absolute positioning */
+    background-color: #FCB19D;
+    border-radius: 20px;
+    padding: 0 10px;
+    gap:10px;
 }
 
 .search-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 20px; /* Make the input round */
-    flex: 1; /* Take up remaining space */
-    background-color: rgba(255, 255, 255, 0.5); /* Transparent white background */
-    margin-right: 10px; /* Adjust margin */
-    height: 10px; /* Adjust height */
+    border: none;
+    height: 44px; /* Adjust height */
+    width:349px;
+    background-color: transparent;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+
+.search-input::placeholder{
+    color: white;
+}
+
+.search-input:focus-visible {
+    background-color: transparent;
+    border: transparent;
+    outline: transparent;
+    color:white;
 }
 
 .search-icon {
-    position: absolute;
     right: 15px; /* Adjust icon position */
     cursor: pointer;
-    border: 1px solid #ccc;
     color: white; /* Adjust icon color */
     font-size: 1.2rem; /* Adjust icon size */
 }
