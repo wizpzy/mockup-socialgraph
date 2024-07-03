@@ -208,11 +208,12 @@ function Mapbox() {
       );
     }); //click clusters to zoom in
 
-    map.current.on('click', (event) => {
+    map.current.on('click', 'unclustered-point', (event) => {
       // If the user clicked on one of your markers, get its information.
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ['unclustered-point']
       });
+      map.current.easeTo({})
       if (!features.length) {
         return;
       }
