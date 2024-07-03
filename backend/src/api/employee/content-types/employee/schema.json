@@ -45,10 +45,17 @@
       "target": "api::education.education",
       "mappedBy": "Student"
     },
+    "Email": {
+      "type": "email"
+    },
+    "Phone": {
+      "type": "string"
+    },
     "Certificates": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::certificate.certificate"
+      "target": "api::certificate.certificate",
+      "mappedBy": "Employee"
     }
   }
 }

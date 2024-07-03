@@ -4,7 +4,8 @@
   "info": {
     "singularName": "certificate",
     "pluralName": "certificates",
-    "displayName": "Certificate"
+    "displayName": "Certificate",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,14 +17,21 @@
       "required": true
     },
     "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "Description": {
       "type": "text"
+    },
+    "Employee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::employee.employee",
+      "inversedBy": "Certificates"
     }
   }
 }
