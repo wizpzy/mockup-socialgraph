@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loade
 import Axios from 'axios'
 import './filter.css'
 import './Mapbox.css'
+import provinces from '../json/provinces.json'
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA';
 
@@ -75,6 +76,8 @@ function Mapbox() {
       });
     } //init map
 
+    console.log(provinces)
+
     const addDataToMap = () => {
       const geojsonCompanies = getGeojsonCompanies(selectedIndustry)
       if (map.current.getSource('companies')) {
@@ -86,7 +89,7 @@ function Mapbox() {
           cluster: true,
           clusterMaxZoom: 15,
           clusterRadius: 50
-        });
+        }); // company source
 
         map.current.addLayer({
           id: 'companies-clusters',
@@ -118,7 +121,7 @@ function Mapbox() {
             'circle-stroke-width': 3,
             'circle-stroke-color': '#fff'
           }
-        });
+        }); // layer cluster
 
         map.current.addLayer({
           id: 'cluster-count',
@@ -130,7 +133,7 @@ function Mapbox() {
             'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
             'text-size': 12
           }
-        });
+        }); // layer cluster count
 
         map.current.addLayer({
           id: 'unclustered-point',
@@ -143,6 +146,20 @@ function Mapbox() {
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff'
           }
+        }); // layer company node
+
+        map.current.addSource('provinces', {
+          type: 'geojson',
+          data: provinces,
+        })
+        map.current.addLayer({
+          id: 'provinces-layer',
+          type: 'fill',
+          source: 'provinces',
+          paint: {
+            'fill-color': 'rgba(0, 0, 0, 0)',
+            'fill-outline-color': 'rgba(255, 0, 0, 1)'
+          }
         });
       }
     };
@@ -154,6 +171,24 @@ function Mapbox() {
       console.log('Loading style');
       map.current.on('load', addDataToMap);
     } //load data to map
+
+    map.current.on('click', 'provinces-layer', (e) => {
+      const layer = map.current.getLayer('provinces-layer');
+      const features = map.current.queryRenderedFeatures(e.point, {
+        layers: ['provinces-layer']
+      });
+      console.log(features[0].properties)
+      map.current.setPaintProperty('provinces-layer', 'fill-color', [
+        'case',
+        ['==', ['get', 'pro_en'], features[0].properties.pro_en], // Adjust the property name if it's different in your GeoJSON
+        'rgba(255, 200, 0, 0.4)',
+        'rgba(0, 0, 0, 0)' // Transparent for other provinces
+      ]);
+      map.current.easeTo({
+        center: [features[0].properties.center_long, features[0].properties.center_lat],
+        zoom: 8
+      })
+    });
 
     map.current.on('click', 'companies-clusters', (e) => {
       const features = map.current.queryRenderedFeatures(e.point, {
@@ -173,11 +208,12 @@ function Mapbox() {
       );
     }); //click clusters to zoom in
 
-    map.current.on('click', (event) => {
+    map.current.on('click', 'unclustered-point', (event) => {
       // If the user clicked on one of your markers, get its information.
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ['unclustered-point']
       });
+      map.current.easeTo({})
       if (!features.length) {
         return;
       }
