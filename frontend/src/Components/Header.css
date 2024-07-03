@@ -1,0 +1,96 @@
+/* Header.css */
+
+.header {
+    background-color: #FA4616;
+    width: 100%;
+    height: 90px;
+    position: relative; /* Ensure the header has a positioning context */
+    z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
+    align-content: center;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 16px;
+}
+
+.logo {
+    height: 45px;
+}
+
+.header-filters {
+    display: flex;
+    width: 445;
+    height: 48;
+    gap: 15px;
+}
+
+
+.filter-dropdown {
+    padding:10px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    width: 215px;
+    justify-content: start;
+    align-items: center;
+    display : flex;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px ;
+    font-weight: 500;
+    color: #FA4616;
+}
+
+.filter-dropdown option {
+    font-size: 13px;
+    font-weight: 400;
+    color: black;
+    font-family: "Poppins", sans-serif;
+}
+
+
+/* Styles for the search bar */
+.header-search {
+    display: flex;
+    align-items: center;
+    background-color: #FCB19D;
+    border-radius: 20px;
+    padding: 0 10px;
+    gap:10px;
+}
+
+.search-input {
+    border: none;
+    height: 44px; /* Adjust height */
+    width:349px;
+    background-color: transparent;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+
+.search-input::placeholder{
+    color: white;
+}
+
+.search-input:focus-visible {
+    background-color: transparent;
+    border: transparent;
+    outline: transparent;
+    color:white;
+}
+
+.search-icon {
+    right: 15px; /* Adjust icon position */
+    cursor: pointer;
+    color: white; /* Adjust icon color */
+    font-size: 1.2rem; /* Adjust icon size */
+}
+
+/* Centering the search bar horizontally */
+.header-search {
+    justify-content: center;
+}
