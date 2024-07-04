@@ -3,8 +3,9 @@
 .header {
     background-color: #FA4616;
     width: 100%;
-    height: 64px;
-    position: relative; /* Ensure the header has a positioning context */
+    height: 56px;
+    position: sticky; /* Ensure the header has a positioning context */
+    top:0px;
     z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
     align-content: center;
 }
@@ -29,7 +30,7 @@
 
 
 .filter-dropdown {
-    padding: 5px 0 5px 5px;
+    padding: 5px 0 5px 10px;
     border: none;
     border-radius: 10px;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
@@ -57,8 +58,6 @@
     background-color: #F6F4F4 !important;
 }
 
-
-
 /* Styles for the search bar */
 .header-search {
     display: flex;
@@ -72,7 +71,7 @@
 
 .search-input {
     border: none;
-    height: 35px; /* Adjust height */
+    height: 28px;
     width:349px;
     background-color: transparent;
     font-family: "Poppins", sans-serif;
@@ -96,7 +95,7 @@
     right: 15px; /* Adjust icon position */
     cursor: pointer;
     color: white; /* Adjust icon color */
-    font-size: 24px; /* Adjust icon size */
+    font-size: 16px; /* Adjust icon size */
 }
 
 .companySuggestion {
