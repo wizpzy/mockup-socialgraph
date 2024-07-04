@@ -47,6 +47,7 @@ const App = () => {
       <Mapbox
         queryIndustry={queryIndustry}
         selectedIndustry={selectedIndustry}
+        selectedProvince={selectedProvince}
         location={location}
       />
     </div>
