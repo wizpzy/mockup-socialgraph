@@ -95,6 +95,12 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
           ['==', ['get', 'pro_en'], selectedProvince],
           'rgba(255, 150, 0, 0.15)',
           'rgba(0, 0, 0, 0)'
+        ]);//'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
+        map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
+          'case',
+          ['==', ['get', 'pro_en'], selectedProvince],
+          'rgba(255, 0, 0, 0.7)',
+          'rgba(0, 0, 0, 0)'
         ]);
         if (selectedProvince !== 'all') {
           const province_feat = provinces.features.find(feature => feature.properties.pro_en === selectedProvince);
@@ -187,7 +193,7 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
           source: 'provinces',
           paint: {
             'fill-color': 'rgba(0, 0, 0, 0)',
-            'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
+            // 'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
           }
         });
         map.current.moveLayer('companies-clusters', 'unclustered-point')
