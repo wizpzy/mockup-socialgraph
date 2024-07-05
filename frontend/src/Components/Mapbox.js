@@ -22,7 +22,7 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
     const fetchData = async () => {
       try {
         const response = await Axios.get(
-          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry"
+          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image"
         );
         //console.log(response);
         setQueryData(response.data.data);
@@ -60,6 +60,7 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
             industry: item.attributes.Industry.data
               ? item.attributes.Industry.data.attributes.Name
               : null,
+            imageUrl: item.attributes.Image.data ? item.attributes.Image.data.attributes.url : null,
             cluster: false,
             id: item.id,
           },
@@ -95,7 +96,7 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
           ['==', ['get', 'pro_en'], selectedProvince],
           'rgba(255, 150, 0, 0.15)',
           'rgba(0, 0, 0, 0)'
-        ]);//'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
+        ]);
         map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
           'case',
           ['==', ['get', 'pro_en'], selectedProvince],
@@ -270,7 +271,8 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
         .setHTML(
           `<h2> ${feature.properties.title} </h2>
           <h3> ${feature.properties.industry} </h3>
-          <p> ${feature.properties.description} </p>`
+          <p> ${feature.properties.description} </p>
+          ${feature.properties.imageUrl ? `<img src="${'http://localhost:1337'+feature.properties.imageUrl}" alt="${feature.properties.title}" style="max-width:100%;">` : ''}`
         )
         .addTo(map.current);
       popupRef.current = popup;
