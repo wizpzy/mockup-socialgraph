@@ -5,7 +5,7 @@ import {
   IoChevronForwardSharp,
   IoMailOpenSharp,
   IoGlobeOutline,
-  IoLocationSharp 
+  IoLocationSharp
 } from "react-icons/io5";
 import { MdLocalPhone } from "react-icons/md";
 import CoverPic from "../images/Esicbackgroundpic.png";
@@ -41,30 +41,30 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
               </div>
               <div className="company-logo">
                 {selectedCompany !== 0 && company.attributes.Image.data ?
-                  <img src={'http://localhost:1337'+ company.attributes.Image.data.attributes.url} alt="logo-image" className="logo-image" />
+                  <img src={'http://localhost:1337' + company.attributes.Image.data.attributes.url} alt="logo-image" className="logo-image" />
                   : <img src={LogoPic} alt="logo-image" className="logo-image" />
                 }
-                
+
                 {/* <img src={LogoPic} alt="logo-image" className="logo-image" /> */}
               </div>
             </div>
             <div className="sidebar-body">
               <div className="company-name">
                 {/* <p>Esic Plus</p> */}
-                <p>{selectedCompany !== 0 && company ? company.attributes.Name : "company name"}</p>
+                <p>
+                  {selectedCompany !== 0 && company ? company.attributes.Name : "company name"}
+                </p>
               </div>
-              <div className="company-cover-letter">
-                {/* <p>
-                  ESIC is a research group that enhance interactivity between
-                  digital media and human beings
-                </p> */}
+              {/* <div className="company-cover-letter">
                 <p>{selectedCompany !== 0 && company ? company.attributes.Description : "Company Description"}</p>
-              </div>
+              </div> */}
               <div className="company-industry">
                 {/* <p>Design</p> */}
-                <p>{selectedCompany !== 0 && company.attributes.Industry.data ?
-                  company.attributes.Industry.data.attributes.Name : "industry"
-                }</p>
+                <p>
+                  {selectedCompany !== 0 && company.attributes.Industry.data ?
+                    company.attributes.Industry.data.attributes.Name : "industry"
+                  }
+                </p>
               </div>
               <div className="company-about">
                 <b>About</b>
@@ -73,42 +73,52 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
                   Group at Computer Engineering Department, King Mongkut's
                   University of technology Thonburi , Thailand.
                 </p> */}
-                <p>{selectedCompany !== 0 && company.attributes.Description ?
-                  company.attributes.Description : "Company Description"
-                }</p>
+                <p>
+                  {selectedCompany !== 0 && company.attributes.Description ?
+                    company.attributes.Description : "Company Description"
+                  }
+                </p>
               </div>
               <div className="company-contact">
                 <b>Contact</b>
                 <div className="company-info">
                   <MdLocalPhone />
                   {/* <p>(+66)2 115 1010</p> */}
-                  <p>{selectedCompany !== 0 && company.attributes.Tel ?
-                  company.attributes.Tel : "Company Tel"
-                }</p>
+                  <p>
+                    {selectedCompany !== 0 && company.attributes.Tel ?
+                      company.attributes.Tel : "Company Tel"
+                    }
+                  </p>
                 </div>
                 <div className="company-info">
                   <IoMailOpenSharp />
                   {/* <p>info@esicplus.co.th</p> */}
-                  <p>{selectedCompany !== 0 && company.attributes.Email ?
-                  company.attributes.Email : "Company Email"
-                }</p>
+                  <p>
+                    {selectedCompany !== 0 && company.attributes.Email ?
+                      company.attributes.Email : "Company Email"
+                    }
+                  </p>
                 </div>
                 <div className="company-info">
                   <IoGlobeOutline />
                   {/* <p>https://esiclab.tech/esiclab</p> */}
-                  <p>{selectedCompany !== 0 && company.attributes.Website ?
-                  company.attributes.Website : "Company Website"
-                }</p>
+                  <p>
+                    {selectedCompany !== 0 && company.attributes.Website ?
+                      company.attributes.Website : "Company Website"
+                    }
+                  </p>
                 </div>
                 <div className="company-info">
-                  <IoLocationSharp  />
-                  <p>{selectedCompany !== 0 && company.attributes.Address ?
-                  company.attributes.Address : "Company Address"
-                }</p>
+                  <IoLocationSharp />
+                  <p>
+                    {selectedCompany !== 0 && company.attributes.Address ?
+                      company.attributes.Address : "Company Address"
+                    }
+                  </p>
                 </div>
               </div>
               <div className="view-company-detail">
-                  View Company <IoChevronForwardSharp />
+                View Company <IoChevronForwardSharp />
               </div>
             </div>
           </div>
