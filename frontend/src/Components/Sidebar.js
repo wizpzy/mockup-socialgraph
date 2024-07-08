@@ -100,7 +100,7 @@ const Sidebar = ({ onClose, children }) => {
           </div>
         </div>
       ) : (
-        <div className="sidebar">
+        <div className="h-sidebar">
           <div className="show-button">
             <button className="show-icon" onClick={handleSidebar}>
               <IoChevronForwardSharp />

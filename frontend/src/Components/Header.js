@@ -3,7 +3,7 @@ import Axios from "axios";
 import "./Header.css";
 import logo from "../images/SocialGraphLogo2.png";
 import Provinces from "../data/provinces.json";
-import { IoSearchSharp } from "react-icons/io5";
+import { IoSearchSharp, IoChevronDownSharp } from "react-icons/io5";
 
 const Header = ({
   queryIndustry,
@@ -78,7 +78,10 @@ const Header = ({
             <ul className="companySuggestion">
               {suggestions.length > 0 ? (
                 suggestions.map((company, index) => (
-                  <li key={index} onClick={() => handleSuggestionClick(company)}>
+                  <li
+                    key={index}
+                    onClick={() => handleSuggestionClick(company)}
+                  >
                     {company.attributes.Name}
                   </li>
                 ))
@@ -111,16 +114,18 @@ const Header = ({
             onChange={(e) => setSelectedProvince(e.target.value)}
           >
             <option value="all">All Provinces</option>
-            {provinces.sort((a, b) =>
+            {provinces
+              .sort((a, b) =>
                 a.properties.pro_en.localeCompare(b.properties.pro_en)
-              ).map((province) => (
-              <option
-                key={province.properties.pro_code}
-                value={province.properties.pro_en}
-              >
-                {province.properties.pro_en}
-              </option>
-            ))}
+              )
+              .map((province) => (
+                <option
+                  key={province.properties.pro_code}
+                  value={province.properties.pro_en}
+                >
+                  {province.properties.pro_en}
+                </option>
+              ))}
           </select>
         </div>
       </div>

@@ -3,6 +3,7 @@ import Axios from "axios";
 import Header from "./Components/Header";
 import Mapbox from "./Components/Mapbox";
 import Sidebar from "./Components/Sidebar";
+import ProductSidebar from "./Components/Sidebar_product"
 import "./App.css";
 
 const App = () => {
@@ -48,6 +49,7 @@ const App = () => {
         location={location}
       />
       <Sidebar/>
+      {/* <ProductSidebar/> */}
     </div>
   );
 };
