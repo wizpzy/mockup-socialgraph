@@ -78,37 +78,6 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       if (map.current.getSource("companies")) {
         console.log('Source companies existed')
         map.current.getSource("companies").setData(geojsonCompanies);
-        // map.current.setPaintProperty('provinces-layer', 'fill-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
-        //   'case',
-        //   ['==', ['get', 'pro_en'], selectedProvince],
-        //   'rgba(255, 150, 0, 0.15)',
-        //   'rgba(0, 0, 0, 0)'
-        // ]);
-        // map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
-        //   'case',
-        //   ['==', ['get', 'pro_en'], selectedProvince],
-        //   'rgba(255, 0, 0, 0.7)',
-        //   'rgba(0, 0, 0, 0)'
-        // ]);
-        // if (selectedProvince !== 'all') {
-        //   const province_feat = provinces.features.find(feature => feature.properties.pro_en === selectedProvince);
-        //   //console.log(province_feat)
-        //   map.current.easeTo({
-        //     center: [province_feat.properties.center_long, province_feat.properties.center_lat],
-        //     zoom: 8
-        //   })
-        //   const screen_center = turf.point([map.current.getCenter().lng, map.current.getCenter().lat]);
-        //   const provincePolygon = province_feat.geometry.type === 'Polygon' ? turf.polygon(province_feat.geometry.coordinates) : turf.multiPolygon(province_feat.geometry.coordinates);
-        //   if (zoom <= 8 || !turf.booleanPointInPolygon(screen_center, provincePolygon)) {
-        //     map.current.easeTo({
-        //       center: [province_feat.properties.center_long, province_feat.properties.center_lat],
-        //       zoom: 8,
-        //       duration: 750,
-        //     });
-        //   } else {
-        //     map.current.easeTo({});
-        //   }
-        // }
 
       } else {
         map.current.addSource("companies", {
@@ -125,18 +94,20 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           source: "companies",
           filter: ["has", "point_count"],
           paint: {
-            // Blue, 20px circles when point count is less than 2
-            // Yellow, 30px circles when point count is between 2 and 3
-            // Pink, 40px circles when point count is greater than or equal to 3
+            // Blue, 20px circles when point count is less than 5
+            // Yellow, 30px circles when point count is between 5 and 10
+            // Pink, 40px circles when point count is greater than or equal to 10
             "circle-color": "#FF5733",
             "circle-radius": [
               "step",
               ["get", "point_count"],
               15,
-              5,
-              20,
               10,
+              20,
+              20,
               25,
+              30,
+              30
             ],
             'circle-stroke-width': 3,
             'circle-stroke-color': '#fff'
@@ -164,10 +135,64 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           source: "companies",
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": "#FF5733",
+            // "circle-color": "#FF5733",
+            "circle-color": [
+              'match',
+              ['get', 'industry'],
+              'Festival',
+              '#AF147A',
+              'Food',
+              '#FFB800',
+              'Travel',
+              '#42BEFF',
+              'Book',
+              '#0065AA',
+              'Film',
+              '#2C2727',
+              'Sport',
+              '#E80002',
+              'Thai Art',
+              '#78FF00',
+              'Educational Game',
+              '#22A51A',
+              'Fashion',
+              '#A400DE',
+              'Music',
+              '#E17000',
+              'Design',
+              '#FF6E6D',
+              '#ccc'
+            ],
             "circle-radius": 8,
             "circle-stroke-width": 5,
-            "circle-stroke-color": "rgba(255, 87, 51, 0.5)",
+            // "circle-stroke-color": "rgba(255, 87, 51, 0.5)",
+            "circle-stroke-color": [
+              'match',
+              ['get', 'industry'],
+              'Festival',
+              'rgba(175, 20, 122, 0.5)',
+              'Food',
+              'rgba(255, 184, 0, 0.5)',
+              'Travel',
+              'rgba(66, 190, 255, 0.5)',
+              'Book',
+              'rgba(0, 101, 170, 0.5)',
+              'Film',
+              'rgba(44, 39, 39, 0.5)',
+              'Sport',
+              'rgba(232, 0, 2, 0.5)',
+              'Thai Art',
+              'rgba(120, 255, 0, 0.5)',
+              'Educational Game',
+              'rgba(34, 165, 26, 0.5)',
+              'Fashion',
+              'rgba(164, 0, 222, 0.5)',
+              'Music',
+              'rgba(225, 112, 0, 0.5)',
+              'Design',
+              'rgba(255, 110, 109, 0.5)',
+              'rgba(204, 204, 204, 0.5)'
+            ],
           },
         }); // layer company node
 
@@ -197,30 +222,6 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       console.log('Loading style');
       map.current.on("load", addDataToMap); //load data to map
     }
-
-    // map.current.on('click', 'provinces-layer', (e) => {
-    //   const features = map.current.queryRenderedFeatures(e.point, {
-    //     layers: ['provinces-layer']
-    //   });
-    //   map.current.setPaintProperty('provinces-layer', 'fill-color', [
-    //     'case',
-    //     ['==', ['get', 'pro_en'], features[0].properties.pro_en], // Adjust the property name if it's different in your GeoJSON
-    //     'rgba(200, 50, 0, 0.15)',
-    //     'rgba(0, 0, 0, 0)' // Transparent for other provinces
-    //   ]);
-    //   //console.log(features[0])
-    //   const screen_center = turf.point([map.current.getCenter().lng, map.current.getCenter().lat]);
-    //   const provincePolygon = features[0].geometry.type === 'Polygon' ? turf.polygon(features[0].geometry.coordinates):turf.multiPolygon(features[0].geometry.coordinates);
-    //     if (zoom < 8 || !turf.booleanPointInPolygon(screen_center, provincePolygon)) {
-    //       map.current.easeTo({
-    //         center: [features[0].properties.center_long, features[0].properties.center_lat],
-    //         zoom: 8,
-    //         duration: 750,
-    //       });
-    //     } else {
-    //       map.current.easeTo({});
-    //     }
-    // });
 
     map.current.on('click', 'companies-clusters', (e) => {
       const features = map.current.queryRenderedFeatures(e.point, {
@@ -312,7 +313,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
     }
     }
     
-  },[selectedProvince])
+  },[selectedProvince]) // highlight and pan to the selected province
 
   useEffect(() => {
     map.current.flyTo({
@@ -321,7 +322,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       zoom: 16,
       speed: 4
     });
-  }, [location])
+  }, [location]) // pan to selected company (searched)
 
   return (
     <div className="Mapbox">

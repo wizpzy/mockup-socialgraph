@@ -21,7 +21,7 @@ const App = () => {
           "http://localhost:1337/api/industries"
         );
         const company_response = await Axios.get(
-          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image"
+          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image&pagination[pageSize]=100"
         );
         //console.log(response);
         setQueryIndustry(industry_response.data.data);
