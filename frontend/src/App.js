@@ -6,9 +6,10 @@ import Sidebar from "./Components/Sidebar";
 import "./App.css";
 
 const App = () => {
+  const [queryData, setQueryData] = useState([]);
   const [queryIndustry, setQueryIndustry] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState("all");
-
+  const [selectedCompany, setSelectedCompany] = useState(0);
   const [selectedProvince, setSelectedProvince] = useState("all");
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
@@ -16,11 +17,15 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await Axios.get(
+        const industry_response = await Axios.get(
           "http://localhost:1337/api/industries"
         );
-        console.log(response);
-        setQueryIndustry(response.data.data);
+        const company_response = await Axios.get(
+          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image"
+        );
+        //console.log(response);
+        setQueryIndustry(industry_response.data.data);
+        setQueryData(company_response.data.data);
       } catch (error) {
         console.log("Error fetching data: ", error);
       }
@@ -43,12 +48,17 @@ const App = () => {
         setSelectedProvince={setSelectedProvince}
       />
       <Mapbox
-        queryIndustry={queryIndustry}
+        queryData={queryData}
         selectedIndustry={selectedIndustry}
         selectedProvince={selectedProvince}
+        selectedCompany={selectedCompany}
+        setSelectedCompany={setSelectedCompany}
         location={location}
       />
-      <Sidebar/>
+      <Sidebar
+        children={queryData}
+        selectedCompany={selectedCompany}
+      />
     </div>
   );
 };
