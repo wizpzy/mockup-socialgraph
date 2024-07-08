@@ -9,29 +9,15 @@ import provinces from '../data/provinces.json'
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
 
-const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
+const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedCompany, location }) => {
   const mapContainerRef = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(location.lng); // default location
   const [lat, setLat] = useState(location.lat);
   const [zoom, setZoom] = useState(18);
-  const [queryData, setQueryData] = useState([]);
+  //const [queryData, setQueryData] = useState([]);
   const popupRef = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await Axios.get(
-          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image"
-        );
-        //console.log(response);
-        setQueryData(response.data.data);
-      } catch (error) {
-        console.log("Error fetching data: ", error);
-      }
-    };
-    fetchData();
-  }, []); // fetching data
   useEffect(() => {
     console.log("query data : ", queryData);
   }, [queryData]); //log data
@@ -88,40 +74,41 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
 
     const addDataToMap = () => {
       const geojsonCompanies = getGeojsonCompanies(selectedIndustry);
+      console.log("geojson: ",geojsonCompanies)
       if (map.current.getSource("companies")) {
         console.log('Source companies existed')
         map.current.getSource("companies").setData(geojsonCompanies);
-        map.current.setPaintProperty('provinces-layer', 'fill-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
-          'case',
-          ['==', ['get', 'pro_en'], selectedProvince],
-          'rgba(255, 150, 0, 0.15)',
-          'rgba(0, 0, 0, 0)'
-        ]);
-        map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
-          'case',
-          ['==', ['get', 'pro_en'], selectedProvince],
-          'rgba(255, 0, 0, 0.7)',
-          'rgba(0, 0, 0, 0)'
-        ]);
-        if (selectedProvince !== 'all') {
-          const province_feat = provinces.features.find(feature => feature.properties.pro_en === selectedProvince);
-          //console.log(province_feat)
-          map.current.easeTo({
-            center: [province_feat.properties.center_long, province_feat.properties.center_lat],
-            zoom: 8
-          })
-          const screen_center = turf.point([map.current.getCenter().lng, map.current.getCenter().lat]);
-          const provincePolygon = province_feat.geometry.type === 'Polygon' ? turf.polygon(province_feat.geometry.coordinates) : turf.multiPolygon(province_feat.geometry.coordinates);
-          if (zoom <= 8 || !turf.booleanPointInPolygon(screen_center, provincePolygon)) {
-            map.current.easeTo({
-              center: [province_feat.properties.center_long, province_feat.properties.center_lat],
-              zoom: 8,
-              duration: 750,
-            });
-          } else {
-            map.current.easeTo({});
-          }
-        }
+        // map.current.setPaintProperty('provinces-layer', 'fill-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
+        //   'case',
+        //   ['==', ['get', 'pro_en'], selectedProvince],
+        //   'rgba(255, 150, 0, 0.15)',
+        //   'rgba(0, 0, 0, 0)'
+        // ]);
+        // map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
+        //   'case',
+        //   ['==', ['get', 'pro_en'], selectedProvince],
+        //   'rgba(255, 0, 0, 0.7)',
+        //   'rgba(0, 0, 0, 0)'
+        // ]);
+        // if (selectedProvince !== 'all') {
+        //   const province_feat = provinces.features.find(feature => feature.properties.pro_en === selectedProvince);
+        //   //console.log(province_feat)
+        //   map.current.easeTo({
+        //     center: [province_feat.properties.center_long, province_feat.properties.center_lat],
+        //     zoom: 8
+        //   })
+        //   const screen_center = turf.point([map.current.getCenter().lng, map.current.getCenter().lat]);
+        //   const provincePolygon = province_feat.geometry.type === 'Polygon' ? turf.polygon(province_feat.geometry.coordinates) : turf.multiPolygon(province_feat.geometry.coordinates);
+        //   if (zoom <= 8 || !turf.booleanPointInPolygon(screen_center, provincePolygon)) {
+        //     map.current.easeTo({
+        //       center: [province_feat.properties.center_long, province_feat.properties.center_lat],
+        //       zoom: 8,
+        //       duration: 750,
+        //     });
+        //   } else {
+        //     map.current.easeTo({});
+        //   }
+        // }
 
       } else {
         map.current.addSource("companies", {
@@ -263,19 +250,22 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
       }
       const feature = features[0];
 
-      if (popupRef.current) {
-        popupRef.current.remove();
-      }
-      const popup = new mapboxgl.Popup({ offset: [0, -20] })
-        .setLngLat(feature.geometry.coordinates)
-        .setHTML(
-          `<h2> ${feature.properties.title} </h2>
-          <h3> ${feature.properties.industry} </h3>
-          <p> ${feature.properties.description} </p>
-          ${feature.properties.imageUrl ? `<img src="${'http://localhost:1337'+feature.properties.imageUrl}" alt="${feature.properties.title}" style="max-width:100%;">` : ''}`
-        )
-        .addTo(map.current);
-      popupRef.current = popup;
+      console.log(feature)
+      setSelectedCompany(feature.properties ? feature.properties.id: 0)
+
+      // if (popupRef.current) {
+      //   popupRef.current.remove();
+      // }
+      // const popup = new mapboxgl.Popup({ offset: [0, -20] })
+      //   .setLngLat(feature.geometry.coordinates)
+      //   .setHTML(
+      //     `<h2> ${feature.properties.title} </h2>
+      //     <h3> ${feature.properties.industry} </h3>
+      //     <p> ${feature.properties.description} </p>
+      //     ${feature.properties.imageUrl ? `<img src="${'http://localhost:1337'+feature.properties.imageUrl}" alt="${feature.properties.title}" style="max-width:100%;">` : ''}`
+      //   )
+      //   .addTo(map.current);
+      // popupRef.current = popup;
     }); //click to show popup
 
     map.current.on("mouseenter", "companies-clusters", () => {
@@ -285,7 +275,45 @@ const Mapbox = ({ selectedIndustry, selectedProvince, location }) => {
       map.current.getCanvas().style.cursor = "";
     });
 
-  }, [queryData, selectedIndustry, selectedProvince]);
+  }, [queryData, selectedIndustry,]);
+
+  useEffect(() => {
+    if (map.current.isStyleLoaded()) {
+      map.current.setPaintProperty('provinces-layer', 'fill-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
+      'case',
+      ['==', ['get', 'pro_en'], selectedProvince],
+      'rgba(255, 150, 0, 0.15)',
+      'rgba(0, 0, 0, 0)'
+    ]);
+    map.current.setPaintProperty('provinces-layer', 'fill-outline-color', selectedProvince === 'all' ? 'rgba(0, 0, 0, 0)' : [
+      'case',
+      ['==', ['get', 'pro_en'], selectedProvince],
+      'rgba(255, 0, 0, 0.7)',
+      'rgba(0, 0, 0, 0)'
+    ]);
+    if (selectedProvince !== 'all') {
+      const province_feat = provinces.features.find(feature => feature.properties.pro_en === selectedProvince);
+      //console.log(province_feat)
+      map.current.easeTo({
+        center: [province_feat.properties.center_long, province_feat.properties.center_lat],
+        zoom: 8
+      })
+      const screen_center = turf.point([map.current.getCenter().lng, map.current.getCenter().lat]);
+      const provincePolygon = province_feat.geometry.type === 'Polygon' ? turf.polygon(province_feat.geometry.coordinates) : turf.multiPolygon(province_feat.geometry.coordinates);
+      if (zoom <= 8 || !turf.booleanPointInPolygon(screen_center, provincePolygon)) {
+        map.current.easeTo({
+          center: [province_feat.properties.center_long, province_feat.properties.center_lat],
+          zoom: 8,
+          duration: 750,
+        });
+      } else {
+        map.current.easeTo({});
+      }
+    }
+    }
+    
+  },[selectedProvince])
+
   useEffect(() => {
     map.current.flyTo({
       center: [location.lng, location.lat],
