@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import "./Sidebar.css"; // Import CSS for styling
 import {
   IoChevronBackSharp,
@@ -11,8 +11,8 @@ import { MdLocalPhone } from "react-icons/md";
 import CoverPic from "../images/Esicbackgroundpic.png";
 import LogoPic from "../images/Logo-Responsive.png";
 
-const Sidebar = ({ onClose, children, selectedCompany }) => {
-  const [isVisibleSidebar, setVisibleSidebar] = useState(true);
+const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisibleSidebar }) => {
+  // const [isVisibleSidebar, setVisibleSidebar] = useState(true);
   const handleSidebar = () => {
     setVisibleSidebar(!isVisibleSidebar);
   };
@@ -40,9 +40,10 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
                 {/* <img src={children.attributes.Image} alt="cover-image" className="cover-image" /> */}
               </div>
               <div className="company-logo">
-                {selectedCompany !== 0 && company.attributes.Image.data ?
-                  <img src={'http://localhost:1337' + company.attributes.Image.data.attributes.url} alt="logo-image" className="logo-image" />
-                  : <img src={LogoPic} alt="logo-image" className="logo-image" />
+                {
+                  selectedCompany !== 0 && company.attributes.Image.data ?
+                    <img src={'http://localhost:1337' + company.attributes.Image.data.attributes.url} alt="logo-image" className="logo-image" /> :
+                    <img src={LogoPic} alt="logo-image" className="logo-image" />
                 }
 
                 {/* <img src={LogoPic} alt="logo-image" className="logo-image" /> */}
@@ -52,7 +53,10 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
               <div className="company-name">
                 {/* <p>Esic Plus</p> */}
                 <p>
-                  {selectedCompany !== 0 && company ? company.attributes.Name : "company name"}
+                  {
+                    selectedCompany !== 0 && company ?
+                      company.attributes.Name :
+                      "company name"}
                 </p>
               </div>
               {/* <div className="company-cover-letter">
@@ -61,21 +65,20 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
               <div className="company-industry">
                 {/* <p>Design</p> */}
                 <p>
-                  {selectedCompany !== 0 && company.attributes.Industry.data ?
-                    company.attributes.Industry.data.attributes.Name : "industry"
+                  {
+                    selectedCompany !== 0 && company.attributes.Industry.data ?
+                      company.attributes.Industry.data.attributes.Name :
+                      "industry"
                   }
                 </p>
               </div>
               <div className="company-about">
                 <b>About</b>
-                {/* <p>
-                  ESIC Lab is EDUTAINMENT & SOCIO-INTERACTION COMPUTING Research
-                  Group at Computer Engineering Department, King Mongkut's
-                  University of technology Thonburi , Thailand.
-                </p> */}
                 <p>
-                  {selectedCompany !== 0 && company.attributes.Description ?
-                    company.attributes.Description : "Company Description"
+                  {
+                    selectedCompany !== 0 && company.attributes.Description ?
+                      company.attributes.Description :
+                      "Company Description"
                   }
                 </p>
               </div>
@@ -83,10 +86,11 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
                 <b>Contact</b>
                 <div className="company-info">
                   <MdLocalPhone />
-                  {/* <p>(+66)2 115 1010</p> */}
                   <p>
-                    {selectedCompany !== 0 && company.attributes.Tel ?
-                      company.attributes.Tel : "Company Tel"
+                    {
+                      selectedCompany !== 0 && company.attributes.Tel ?
+                        company.attributes.Tel :
+                        "Company Tel"
                     }
                   </p>
                 </div>
@@ -94,25 +98,31 @@ const Sidebar = ({ onClose, children, selectedCompany }) => {
                   <IoMailOpenSharp />
                   {/* <p>info@esicplus.co.th</p> */}
                   <p>
-                    {selectedCompany !== 0 && company.attributes.Email ?
-                      company.attributes.Email : "Company Email"
+                    {
+                      selectedCompany !== 0 && company.attributes.Email ?
+                        company.attributes.Email :
+                        "Company Email"
                     }
                   </p>
                 </div>
                 <div className="company-info">
                   <IoGlobeOutline />
                   {/* <p>https://esiclab.tech/esiclab</p> */}
-                  <p>
-                    {selectedCompany !== 0 && company.attributes.Website ?
-                      company.attributes.Website : "Company Website"
-                    }
-                  </p>
+
+                  {
+                    selectedCompany !== 0 && company.attributes.Website ?
+                      <a href={company.attributes.Website}> {company.attributes.Website} </a> :
+                      <p>Company Website</p>
+                  }
+
                 </div>
                 <div className="company-info">
                   <IoLocationSharp />
                   <p>
-                    {selectedCompany !== 0 && company.attributes.Address ?
-                      company.attributes.Address : "Company Address"
+                    {
+                      selectedCompany !== 0 && company.attributes.Address ?
+                        company.attributes.Address :
+                        "Company Address"
                     }
                   </p>
                 </div>

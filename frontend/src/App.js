@@ -12,6 +12,7 @@ const App = () => {
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedCompany, setSelectedCompany] = useState(0);
   const [selectedProvince, setSelectedProvince] = useState("all");
+  const [isVisibleSidebar, setVisibleSidebar] = useState(true);
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
 
@@ -55,10 +56,14 @@ const App = () => {
         selectedCompany={selectedCompany}
         setSelectedCompany={setSelectedCompany}
         location={location}
+        isVisibleSidebar={isVisibleSidebar}
+        setVisibleSidebar={setVisibleSidebar}
       />
       <Sidebar
         children={queryData}
         selectedCompany={selectedCompany}
+        isVisibleSidebar={isVisibleSidebar}
+        setVisibleSidebar={setVisibleSidebar}
       />
       {/* <ProductSidebar/> */}
     </div>

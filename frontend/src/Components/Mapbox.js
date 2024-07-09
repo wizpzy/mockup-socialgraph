@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import Axios from 'axios'
 import * as turf from '@turf/turf'
 import './filter.css'
 import './Mapbox.css'
@@ -9,14 +8,13 @@ import provinces from '../data/provinces.json'
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
 
-const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedCompany, location }) => {
+const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedCompany, isVisibleSidebar, setVisibleSidebar, location }) => {
   const mapContainerRef = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(location.lng); // default location
   const [lat, setLat] = useState(location.lat);
   const [zoom, setZoom] = useState(18);
   //const [queryData, setQueryData] = useState([]);
-  const popupRef = useRef(null);
 
   useEffect(() => {
     console.log("query data : ", queryData);
@@ -75,19 +73,21 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
     const addDataToMap = () => {
       const geojsonCompanies = getGeojsonCompanies(selectedIndustry);
       console.log("geojson: ",geojsonCompanies)
-      if (map.current.getSource("companies")) {
+      //reset company data
+      if (map.current.getSource("companies")) { 
         console.log('Source companies existed')
         map.current.getSource("companies").setData(geojsonCompanies);
 
       } else {
+        // company source
         map.current.addSource("companies", {
           type: "geojson",
           data: geojsonCompanies,
           cluster: true,
           clusterMaxZoom: 15,
           clusterRadius: 50
-        }); // company source
-
+        }); 
+        // layer cluster
         map.current.addLayer({
           id: "companies-clusters",
           type: "circle",
@@ -112,8 +112,8 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
             'circle-stroke-width': 3,
             'circle-stroke-color': '#fff'
           }
-        }); // layer cluster
-
+        }); 
+        // layer cluster count
         map.current.addLayer({
           id: "cluster-count",
           type: "symbol",
@@ -127,8 +127,8 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           paint: {
             "text-color": "#FFF",
           },
-        });
-
+        }); 
+        // layer company node
         map.current.addLayer({
           id: "unclustered-point",
           type: "circle",
@@ -194,12 +194,13 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
               'rgba(204, 204, 204, 0.5)'
             ],
           },
-        }); // layer company node
-
+        }); 
+        // provinces source
         map.current.addSource('provinces', {
           type: 'geojson',
           data: provinces,
-        })
+        }); 
+        // layer province
         map.current.addLayer({
           id: 'provinces-layer',
           type: 'fill',
@@ -208,10 +209,11 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
             'fill-color': 'rgba(0, 0, 0, 0)',
             // 'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
           }
-        });
+        }); 
+
         map.current.moveLayer('companies-clusters', 'unclustered-point')
         map.current.moveLayer('companies-clusters', 'cluster-count')
-        map.current.moveLayer('provinces-layer', 'companies-clusters')
+        map.current.moveLayer('provinces-layer', 'companies-clusters') 
       }
     };
 
@@ -253,6 +255,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
 
       console.log(feature)
       setSelectedCompany(feature.properties ? feature.properties.id: 0)
+      setVisibleSidebar(true)
 
       // if (popupRef.current) {
       //   popupRef.current.remove();
