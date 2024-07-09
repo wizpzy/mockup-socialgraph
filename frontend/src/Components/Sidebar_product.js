@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Sidebar_product.css"; // Import CSS for styling
-import Axios from "axios";
 import {
   IoChevronBackSharp,
   IoChevronForwardSharp,
