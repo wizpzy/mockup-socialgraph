@@ -47,7 +47,7 @@ const App = () => {
         selectedIndustry={selectedIndustry}
         location={location}
       />
-      <Sidebar/>
+      {/* <Sidebar/> */}
     </div>
   );
 };
