@@ -4,6 +4,9 @@ import Axios from "axios";
 import "./filter.css";
 import "./Mapbox.css";
 import img from "../images/Esicwallpaper.png" 
+import leftImage from "../images/EATLAB.png";
+import rightImage from "../images/Thousand of light.png";
+import topImage from "../images/Art.png";
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
@@ -70,16 +73,39 @@ const Mapbox = ({ selectedIndustry, location }) => {
     };
   };
 
+  function createCircularImage(imgSrc, size = 60) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        
+        ctx.beginPath();
+        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.clip();
+  
+        ctx.drawImage(img, 0, 0, size, size);
+  
+        resolve(canvas.toDataURL());
+      };
+      img.onerror = reject;
+      img.src = imgSrc;
+    });
+  }
+
   useEffect(() => {
     if (!map.current) return;
   
     let activeFeature = null;
     let activeCircleIds = [];
-    let circlesVisible = true;
+    let circlesVisible = false;
   
     const updateCircles = () => {
       if (!activeFeature || activeCircleIds.length === 0 || !circlesVisible) return;
-  
+    
       const zoom = map.current.getZoom();
       const offsetBase = 0.0003;
       const scale = Math.pow(2, 18 - zoom);
@@ -88,13 +114,13 @@ const Mapbox = ({ selectedIndustry, location }) => {
         [offsetBase * scale, 0],
         [0, offsetBase * scale],
       ];
-  
+    
       activeCircleIds.forEach((id, index) => {
         const circleCoordinates = [
           activeFeature.geometry.coordinates[0] + offsets[index][0],
           activeFeature.geometry.coordinates[1] + offsets[index][1]
         ];
-  
+    
         if (map.current.getSource(id)) {
           map.current.getSource(id).setData({
             type: 'Feature',
@@ -116,11 +142,11 @@ const Mapbox = ({ selectedIndustry, location }) => {
       if (!features.length) {
         return;
       }
-  
+    
       const feature = features[0];  
       const featureId = feature.properties.id;
       const circleIds = [`circle-left-${featureId}`, `circle-right-${featureId}`, `circle-top-${featureId}`];
-  
+    
       if (circlesVisible && activeFeature && activeFeature.properties.id === featureId) {
         // Remove existing circles
         circleIds.forEach(id => {
@@ -147,12 +173,12 @@ const Mapbox = ({ selectedIndustry, location }) => {
             }
           });
         }
-  
+    
         // Add new circles
         activeFeature = feature;
         activeCircleIds = circleIds;
         circlesVisible = true;
-  
+    
         const zoom = map.current.getZoom();
         const offsetBase = 0.0003;
         const scale = Math.pow(2, 18 - zoom);
@@ -161,14 +187,14 @@ const Mapbox = ({ selectedIndustry, location }) => {
           [offsetBase * scale, 0],
           [0, offsetBase * scale],
         ];
-        const colors = ['rgba(255,0,0,0.5)', 'rgba(0,255,0,0.5)', 'rgba(0,0,255,0.5)'];
-  
+        const images = [leftImage, rightImage, topImage];
+    
         circleIds.forEach((id, index) => {
           const circleCoordinates = [
             feature.geometry.coordinates[0] + offsets[index][0],
             feature.geometry.coordinates[1] + offsets[index][1]
           ];
-  
+    
           map.current.addSource(id, {
             type: 'geojson',
             data: {
@@ -179,26 +205,27 @@ const Mapbox = ({ selectedIndustry, location }) => {
               }
             }
           });
-  
-          map.current.addLayer({
-            id: id,
-            type: 'circle',
-            source: id,
-            paint: {
-              'circle-radius': 30,
-              'circle-color': colors[index],
-              'circle-opacity': 0.6,
-              'circle-stroke-width': 2,
-              'circle-stroke-color': 'white'
-            },
-            layout: {
-              visibility: 'visible'
-            }
+    
+          // Create circular image and add to map
+          createCircularImage(images[index]).then(circularImage => {
+            map.current.loadImage(circularImage, (error, image) => {
+              if (error) throw error;
+              map.current.addImage(id, image);
+    
+              map.current.addLayer({
+                id: id,
+                type: 'symbol',
+                source: id,
+                layout: {
+                  'icon-image': id,
+                  'icon-size': 1  // Adjust this value to change the size of the image
+                }
+              });
+            });
           });
         });
-        console.log("Added new circles");
+        console.log("Added new circular image markers");
       }
-  
       updateCircles();
     };
     
@@ -223,7 +250,7 @@ const Mapbox = ({ selectedIndustry, location }) => {
         }
       }
     };
-  }, [currentZoom]);
+  }, []);
 
   useEffect(() => {
     if (!map.current) {
@@ -418,4 +445,3 @@ const Mapbox = ({ selectedIndustry, location }) => {
 };
 
 export default Mapbox;
-
