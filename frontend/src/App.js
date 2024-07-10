@@ -13,6 +13,7 @@ const App = () => {
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
 
+  const [selectedCompany, setSelectedCompany] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,6 +33,7 @@ const App = () => {
     setLocation({ lng, lat });
   };
 
+
   return (
     <div className="App">
       <Header
@@ -46,8 +48,9 @@ const App = () => {
         queryIndustry={queryIndustry}
         selectedIndustry={selectedIndustry}
         location={location}
+        setSelectedCompany={setSelectedCompany}
       />
-      {/* <Sidebar/> */}
+      <Sidebar selectedCompany={selectedCompany} />
     </div>
   );
 };
