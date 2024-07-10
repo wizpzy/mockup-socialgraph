@@ -102,7 +102,7 @@ const Mapbox = ({ selectedIndustry, location }) => {
     let activeFeature = null;
     let activeCircleIds = [];
     let circlesVisible = false;
-  
+    
     const updateCircles = () => {
       if (!activeFeature || activeCircleIds.length === 0 || !circlesVisible) return;
     
@@ -133,6 +133,31 @@ const Mapbox = ({ selectedIndustry, location }) => {
       });
     };
   
+    const checkAndCloseCircles = () => {
+      if (!activeFeature || !circlesVisible) return;
+  
+      const features = map.current.queryRenderedFeatures(
+        map.current.project(activeFeature.geometry.coordinates),
+        { layers: ['unclustered-point'] }
+      );
+  
+      if (features.length === 0 || features[0].properties.id !== activeFeature.properties.id) {
+        // Our point is no longer visible as an unclustered point, so it must have been clustered
+        activeCircleIds.forEach(id => {
+          if (map.current.getLayer(id)) {
+            map.current.removeLayer(id);
+          }
+          if (map.current.getSource(id)) {
+            map.current.removeSource(id);
+          }
+        });
+        activeFeature = null;
+        activeCircleIds = [];
+        circlesVisible = false;
+        console.log("Closed circles due to clustering");
+      }
+    };
+
     const toggleCircles = (e) => {
       console.log("Click event triggered");
       const features = map.current.queryRenderedFeatures(e.point, {
@@ -230,13 +255,13 @@ const Mapbox = ({ selectedIndustry, location }) => {
     };
     
     map.current.on('click', 'unclustered-point', toggleCircles);
-    map.current.on('zoom', updateCircles);
+    map.current.on('zoom', checkAndCloseCircles);
     map.current.on('moveend', updateCircles);
   
     return () => {
       if (map.current) {
         map.current.off('click', 'unclustered-point', toggleCircles);
-        map.current.off('zoom', updateCircles);
+        map.current.off('zoom', checkAndCloseCircles);
         map.current.off('moveend', updateCircles);
         if (activeCircleIds.length > 0) {
           activeCircleIds.forEach(id => {
