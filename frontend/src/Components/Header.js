@@ -3,7 +3,7 @@ import Axios from "axios";
 import "./Header.css";
 import logo from "../images/SocialGraphLogo2.png";
 import Provinces from "../data/provinces.json";
-import { IoSearchSharp, IoChevronDownSharp } from "react-icons/io5";
+import { IoSearchSharp } from "react-icons/io5";
 
 const Header = ({
   queryIndustry,
