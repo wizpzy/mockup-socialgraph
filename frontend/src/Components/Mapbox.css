@@ -16,3 +16,22 @@
 .map-container {
   height: 639px;
 }
+
+.mapboxgl-popup-close-button {
+  display: none;
+}
+
+.companyimg{
+  width:240px;
+  /* margin-left: -10px;
+  margin-top: -10px; */
+  border-top-left-radius:15px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 15px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}

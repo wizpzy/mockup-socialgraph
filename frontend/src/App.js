@@ -3,7 +3,8 @@ import Axios from "axios";
 import Header from "./Components/Header";
 import Mapbox from "./Components/Mapbox";
 import Sidebar from "./Components/Sidebar";
-import ProductSidebar from "./Components/Sidebar_product"
+// import ProductSidebar from "./Components/Sidebar_product";
+import { qs_main } from "./utils/queryString";
 import "./App.css";
 
 const App = () => {
@@ -23,7 +24,7 @@ const App = () => {
           "http://localhost:1337/api/industries"
         );
         const company_response = await Axios.get(
-          "http://localhost:1337/api/companies/?populate[0]=Location&populate[1]=Industry&populate[2]=Image&pagination[pageSize]=100"
+          `http://localhost:1337/api/companies/?${qs_main}`
         );
         //console.log(response);
         setQueryIndustry(industry_response.data.data);

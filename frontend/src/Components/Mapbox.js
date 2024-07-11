@@ -14,13 +14,13 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
   const [lng, setLng] = useState(location.lng); // default location
   const [lat, setLat] = useState(location.lat);
   const [zoom, setZoom] = useState(18);
-  //const [queryData, setQueryData] = useState([]);
+  const popupRef = useRef(null);
 
   useEffect(() => {
     console.log("query data : ", queryData);
   }, [queryData]); //log data
 
-  const filterGeojson = (data, filter) => {
+  const filterGeojson = (data, filter) => { 
     if (filter === "all") return data;
     return data.filter((item) => item.properties.industry === filter);
   };
@@ -87,6 +87,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           clusterMaxZoom: 15,
           clusterRadius: 50
         }); 
+
         // layer cluster
         map.current.addLayer({
           id: "companies-clusters",
@@ -94,9 +95,6 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           source: "companies",
           filter: ["has", "point_count"],
           paint: {
-            // Blue, 20px circles when point count is less than 5
-            // Yellow, 30px circles when point count is between 5 and 10
-            // Pink, 40px circles when point count is greater than or equal to 10
             "circle-color": "#FF5733",
             "circle-radius": [
               "step",
@@ -113,6 +111,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
             'circle-stroke-color': '#fff'
           }
         }); 
+
         // layer cluster count
         map.current.addLayer({
           id: "cluster-count",
@@ -128,6 +127,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
             "text-color": "#FFF",
           },
         }); 
+
         // layer company node
         map.current.addLayer({
           id: "unclustered-point",
@@ -135,7 +135,6 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
           source: "companies",
           filter: ["!", ["has", "point_count"]],
           paint: {
-            // "circle-color": "#FF5733",
             "circle-color": [
               'match',
               ['get', 'industry'],
@@ -195,11 +194,13 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
             ],
           },
         }); 
+
         // provinces source
         map.current.addSource('provinces', {
           type: 'geojson',
           data: provinces,
         }); 
+
         // layer province
         map.current.addLayer({
           id: 'provinces-layer',
@@ -242,6 +243,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
         }); //click clusters to zoom in
     });
 
+    //click to show company information in the sidebar
     map.current.on('click', 'unclustered-point', (event) => {
       // If the user clicked on one of your markers, get its information.
       const features = map.current.queryRenderedFeatures(event.point, {
@@ -256,21 +258,37 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       console.log(feature)
       setSelectedCompany(feature.properties ? feature.properties.id: 0)
       setVisibleSidebar(true)
+    }); 
 
-      // if (popupRef.current) {
-      //   popupRef.current.remove();
-      // }
-      // const popup = new mapboxgl.Popup({ offset: [0, -20] })
-      //   .setLngLat(feature.geometry.coordinates)
-      //   .setHTML(
-      //     `<h2> ${feature.properties.title} </h2>
-      //     <h3> ${feature.properties.industry} </h3>
-      //     <p> ${feature.properties.description} </p>
-      //     ${feature.properties.imageUrl ? `<img src="${'http://localhost:1337'+feature.properties.imageUrl}" alt="${feature.properties.title}" style="max-width:100%;">` : ''}`
-      //   )
-      //   .addTo(map.current);
-      // popupRef.current = popup;
-    }); //click to show popup
+    map.current.on('mouseenter', 'unclustered-point', (event) => {
+      const features = map.current.queryRenderedFeatures(event.point, {
+        layers: ["unclustered-point"],
+      });
+
+      const feature = features[0];
+
+      if (popupRef.current) {
+        popupRef.current.remove();
+      }
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML(
+          `
+          ${feature.properties.imageUrl ? `<img src="${'http://localhost:1337'+feature.properties.imageUrl}" alt="${feature.properties.title} Image" class=companyimg style="max-width:100%; height:auto;">` : ''}
+          <h2>${feature.properties.title}</h2>
+          <h3>${feature.properties.industry}</h3>
+          <p>${feature.properties.description}</p>
+          `
+        )
+        .addTo(map.current);
+      popupRef.current = popup;
+    })
+
+    map.current.on('mouseleave', 'unclustered-point', () => {
+      if (popupRef.current) {
+        popupRef.current.remove();
+      }
+    })
 
     map.current.on("mouseenter", "companies-clusters", () => {
       map.current.getCanvas().style.cursor = "pointer";
@@ -279,7 +297,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       map.current.getCanvas().style.cursor = "";
     });
 
-  }, [queryData, selectedIndustry,]);
+  }, [queryData, selectedIndustry]);
 
   useEffect(() => {
     if (map.current.isStyleLoaded()) {
