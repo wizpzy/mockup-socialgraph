@@ -5,6 +5,7 @@
   top: 56px;
   left: 0;
   height: 100%;
+  /* box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); */
   z-index: 1000;
   display: grid;
   grid-template-columns: 423px 44px;
@@ -12,23 +13,10 @@
 }
 
 .sidebar-content {
+  /* padding-bottom: 20px;  */
   overflow-y:auto;
   background-color: white;
   max-height: 100%;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-}
-
-.sidebar-content::-webkit-scrollbar{
-  width:6px;
-}
-
-.sidebar-content::-webkit-scrollbar-track {
-  background: #CECECE;
-}
-
-.sidebar-content::-webkit-scrollbar-thumb{
-  background-color: #FA4616;
-  border-radius: 20px;
 }
 
 .sidebar-header {
@@ -197,15 +185,6 @@
   border-radius: 0 10px 10px 0;
   justify-content: center;
   cursor: pointer;
-}
-
-.h-sidebar {
-  display: flex;
-  height: 100%;
-  width : 44px;
-  align-items: center;
-  position: absolute;
-  top: 56px;
 }
 
 .show-button {

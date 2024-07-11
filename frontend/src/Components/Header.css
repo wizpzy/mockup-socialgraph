@@ -30,7 +30,6 @@
 
 
 .filter-dropdown {
-    /* appearance: none; */
     padding: 5px 0 5px 10px;
     border: none;
     border-radius: 10px;
@@ -47,11 +46,10 @@
 }
 
 .filter-dropdown option {
-    appearance: none;
     font-size: 13px;
     font-weight: 400;
     color: black;
-    font-family: "Kanit", sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: white !important;
 }
 
@@ -76,7 +74,7 @@
     height: 28px;
     width:349px;
     background-color: transparent;
-    font-family: "Kanit", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 14px;
     font-weight: 400;
     color: white;
@@ -103,11 +101,11 @@
 .companySuggestion {
     display: flex;
     flex-direction: column;
-    width : 399px;
+    width : 407px;
     appearance: none;
     position: absolute;
     background-color: white;
-    top: 35px;
+    top: 45px;
     border-radius: 10px;
     border: none;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
