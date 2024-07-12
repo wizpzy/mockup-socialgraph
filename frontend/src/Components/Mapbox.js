@@ -8,7 +8,7 @@ import provinces from '../data/provinces.json'
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
 
-const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedCompany, isVisibleSidebar, setVisibleSidebar, location }) => {
+const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedCompany, isVisibleSidebar, setVisibleSidebar, location, setHasSidebar }) => {
   const mapContainerRef = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(location.lng); // default location
@@ -258,6 +258,7 @@ const Mapbox = ({ queryData, selectedIndustry, selectedProvince, setSelectedComp
       console.log(feature)
       setSelectedCompany(feature.properties ? feature.properties.id: 0)
       setVisibleSidebar(true)
+      setHasSidebar(true)
     }); 
 
     map.current.on('mouseenter', 'unclustered-point', (event) => {
