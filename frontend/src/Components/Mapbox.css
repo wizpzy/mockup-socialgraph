@@ -10,12 +10,7 @@
   }
 
 .map-container {
-  height: 100%;
-}
-
-.Mapbox {
-  height: 100%;
-  margin-top: -56px;
+  height: 870px;
 }
 
 .mapboxgl-popup-close-button {
