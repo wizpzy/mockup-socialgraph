@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loade
 import Axios from "axios";
 import "./filter.css";
 import "./Mapbox.css";
-import img from "../images/Esicwallpaper.png" 
+import img from "../images/Esicwallpaper.png";
 import leftImage from "../images/EATLAB.png";
 import rightImage from "../images/Thousand of light.png";
 import topImage from "../images/Art.png";
@@ -74,38 +74,40 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
   };
 
   function createCircularImage(imgSrc, size = 60) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      
-      ctx.beginPath();
-      ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.clip();
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
 
-      ctx.drawImage(img, 0, 0, size, size);
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.clip();
 
-      resolve(canvas.toDataURL());
-    };
-    img.onerror = reject;
-    img.src = imgSrc;
-  });
-}
+        ctx.drawImage(img, 0, 0, size, size);
+
+        resolve(canvas.toDataURL());
+      };
+      img.onerror = reject;
+      img.src = imgSrc;
+    });
+  }
 
   useEffect(() => {
     if (!map.current) return;
-  
+
     let activeFeature = null;
     let activeCircleIds = [];
     let circlesVisible = false;
-  
+    let currentHighlight = null;
+
     const updateCircles = () => {
-      if (!activeFeature || activeCircleIds.length === 0 || !circlesVisible) return;
-    
+      if (!activeFeature || activeCircleIds.length === 0 || !circlesVisible)
+        return;
+
       const zoom = map.current.getZoom();
       const offsetBase = 0.0003;
       const scale = Math.pow(2, 18 - zoom);
@@ -114,20 +116,20 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         [offsetBase * scale, 0],
         [0, offsetBase * scale],
       ];
-    
+
       activeCircleIds.forEach((id, index) => {
         const circleCoordinates = [
           activeFeature.geometry.coordinates[0] + offsets[index][0],
-          activeFeature.geometry.coordinates[1] + offsets[index][1]
+          activeFeature.geometry.coordinates[1] + offsets[index][1],
         ];
-    
+
         if (map.current.getSource(id)) {
           map.current.getSource(id).setData({
-            type: 'Feature',
+            type: "Feature",
             geometry: {
-              type: 'Point',
-              coordinates: circleCoordinates
-            }
+              type: "Point",
+              coordinates: circleCoordinates,
+            },
           });
         }
       });
@@ -135,15 +137,18 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
 
     const checkAndCloseCircles = () => {
       if (!activeFeature || !circlesVisible) return;
-  
+
       const features = map.current.queryRenderedFeatures(
         map.current.project(activeFeature.geometry.coordinates),
-        { layers: ['unclustered-point'] }
+        { layers: ["unclustered-point"] }
       );
-  
-      if (features.length === 0 || features[0].properties.id !== activeFeature.properties.id) {
+
+      if (
+        features.length === 0 ||
+        features[0].properties.id !== activeFeature.properties.id
+      ) {
         // Our point is no longer visible as an unclustered point, so it must have been clustered
-        activeCircleIds.forEach(id => {
+        activeCircleIds.forEach((id) => {
           if (map.current.getLayer(id)) {
             map.current.removeLayer(id);
           }
@@ -161,26 +166,38 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
     const toggleCircles = (e) => {
       console.log("Click event triggered");
       const features = map.current.queryRenderedFeatures(e.point, {
-        layers: ["unclustered-point"]
+        layers: ["unclustered-point"],
       });
-      
+
       if (!features.length) {
         return;
       }
-    
-      const feature = features[0];  
+
+      const feature = features[0];
       const featureId = feature.properties.id;
-      const circleIds = [`circle-left-${featureId}`, `circle-right-${featureId}`, `circle-top-${featureId}`];
-    
-      if (circlesVisible && activeFeature && activeFeature.properties.id === featureId) {
+      const circleIds = [
+        `circle-left-${featureId}`,
+        `circle-right-${featureId}`,
+        `circle-top-${featureId}`,
+      ];
+
+      if (
+        circlesVisible &&
+        activeFeature &&
+        activeFeature.properties.id === featureId
+      ) {
         // Remove existing circles
-        circleIds.forEach(id => {
+        circleIds.forEach((id) => {
+          if (map.current.getLayer(`${id}-highlight`)) {
+            map.current.removeLayer(`${id}-highlight`);
+          }
           if (map.current.getLayer(id)) {
             map.current.removeLayer(id);
           }
           if (map.current.getSource(id)) {
             map.current.removeSource(id);
           }
+          map.current.off("click", id);
         });
         activeFeature = null;
         activeCircleIds = [];
@@ -189,21 +206,25 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
       } else {
         // Remove any existing circles first
         if (activeCircleIds.length > 0) {
-          activeCircleIds.forEach(id => {
+          activeCircleIds.forEach((id) => {
+            if (map.current.getLayer(`${id}-highlight`)) {
+              map.current.removeLayer(`${id}-highlight`);
+            }
             if (map.current.getLayer(id)) {
               map.current.removeLayer(id);
             }
             if (map.current.getSource(id)) {
               map.current.removeSource(id);
             }
+            map.current.off("click", id);
           });
         }
-    
+
         // Add new circles
         activeFeature = feature;
         activeCircleIds = circleIds;
         circlesVisible = true;
-    
+
         const zoom = map.current.getZoom();
         const offsetBase = 0.0003;
         const scale = Math.pow(2, 18 - zoom);
@@ -213,37 +234,71 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
           [0, offsetBase * scale],
         ];
         const images = [leftImage, rightImage, topImage];
-    
+
         circleIds.forEach((id, index) => {
           const circleCoordinates = [
             feature.geometry.coordinates[0] + offsets[index][0],
-            feature.geometry.coordinates[1] + offsets[index][1]
+            feature.geometry.coordinates[1] + offsets[index][1],
           ];
-    
+
           map.current.addSource(id, {
-            type: 'geojson',
+            type: "geojson",
             data: {
-              type: 'Feature',
+              type: "Feature",
               geometry: {
-                type: 'Point',
-                coordinates: circleCoordinates
-              }
-            }
+                type: "Point",
+                coordinates: circleCoordinates,
+              },
+            },
           });
-    
+
           // Create circular image and add to map
-          createCircularImage(images[index]).then(circularImage => {
+          createCircularImage(images[index]).then((circularImage) => {
             map.current.loadImage(circularImage, (error, image) => {
               if (error) throw error;
               map.current.addImage(id, image);
-    
+
+              map.current.addLayer({
+                id: `${id}-highlight`,
+                type: "circle",
+                source: id,
+                paint: {
+                  "circle-radius": 35,
+                  "circle-color": "#FF5733",
+                  "circle-opacity": 0,
+                },
+              });
+
               map.current.addLayer({
                 id: id,
-                type: 'symbol',
+                type: "symbol",
                 source: id,
                 layout: {
-                  'icon-image': id,
-                  'icon-size': 1  // Adjust this value to change the size of the image
+                  "icon-image": id,
+                  "icon-size": 1, // Adjust this value to change the size of the image
+                },
+              });
+
+              
+            
+              // Add click handler to toggle highlight
+              map.current.on("click", id, () => {
+                if (currentHighlight) {
+                  map.current.setPaintProperty(
+                    `${currentHighlight}-highlight`,
+                    "circle-opacity",
+                    0
+                  );
+                }
+                if (currentHighlight !== id) {
+                  map.current.setPaintProperty(
+                    `${id}-highlight`,
+                    "circle-opacity",
+                    1
+                  );
+                  currentHighlight = id;
+                } else {
+                  currentHighlight = null;
                 }
               });
             });
@@ -253,24 +308,28 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
       }
       updateCircles();
     };
-    
-    map.current.on('click', 'unclustered-point', toggleCircles);
-    map.current.on('zoom', checkAndCloseCircles);
-    map.current.on('moveend', updateCircles);
-  
+
+    map.current.on("click", "unclustered-point", toggleCircles);
+    map.current.on("zoom", checkAndCloseCircles);
+    map.current.on("moveend", updateCircles);
+
     return () => {
       if (map.current) {
-        map.current.off('click', 'unclustered-point', toggleCircles);
-        map.current.off('zoom', checkAndCloseCircles);
-        map.current.off('moveend', updateCircles);
+        map.current.off("click", "unclustered-point", toggleCircles);
+        map.current.off("zoom", checkAndCloseCircles);
+        map.current.off("moveend", updateCircles);
         if (activeCircleIds.length > 0) {
-          activeCircleIds.forEach(id => {
+          activeCircleIds.forEach((id) => {
+            if (map.current.getLayer(`${id}-highlight`)) {
+              map.current.removeLayer(`${id}-highlight`);
+            }
             if (map.current.getLayer(id)) {
               map.current.removeLayer(id);
             }
             if (map.current.getSource(id)) {
               map.current.removeSource(id);
             }
+            map.current.off("click", id);
           });
         }
       }
@@ -293,8 +352,6 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         const newZoom = map.current.getZoom().toFixed(2);
         setCurrentZoom(newZoom);
       });
-
-      
     }
 
     const addDataToMap = () => {
@@ -387,9 +444,9 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         }); //click clusters to zoom in
     });
 
-    map.current.on('click', 'unclustered-point', (e) => {
+    map.current.on("click", "unclustered-point", (e) => {
       const features = map.current.queryRenderedFeatures(e.point, {
-        layers: ['unclustered-point']
+        layers: ["unclustered-point"],
       });
       if (features.length > 0) {
         const feature = features[0];
@@ -415,9 +472,6 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         popupRef.current.remove();
       }
 
-     
-    
-
       const popup = new mapboxgl.Popup({ offset: [0, -20] })
         .setLngLat(feature.geometry.coordinates)
         .setHTML(
@@ -438,7 +492,7 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         popupRef.current = null;
       }
     });
-            map.current.on("mouseenter", "companies-clusters", () => {
+    map.current.on("mouseenter", "companies-clusters", () => {
       map.current.getCanvas().style.cursor = "pointer";
     });
     map.current.on("mouseleave", "companies-clusters", () => {
@@ -449,11 +503,9 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
       essential: true,
       zoom: zoom,
     });
-
-
   }, [queryData, selectedIndustry, location, setSelectedCompany]);
 
-   useEffect(() => {
+  useEffect(() => {
     // Cleanup function for clickedPoints
     return () => {
       clickedPoints.forEach((point) => {
@@ -466,7 +518,6 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
       });
     };
   }, [clickedPoints]);
-
 
   return (
     <div className="Mapbox">
