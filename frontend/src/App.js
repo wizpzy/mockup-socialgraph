@@ -10,9 +10,9 @@ import "./App.css";
 const App = () => {
   const [queryData, setQueryData] = useState([]);
   const [queryIndustry, setQueryIndustry] = useState([]);
-  const [selectedIndustry, setSelectedIndustry] = useState("all");
+  const [selectedIndustry, setSelectedIndustry] = useState({ value: "all", label: "All Industries" });
   const [selectedCompany, setSelectedCompany] = useState(0);
-  const [selectedProvince, setSelectedProvince] = useState("all");
+  const [selectedProvince, setSelectedProvince] = useState({ value: "all", label: "All Provinces" });
   const [isVisibleSidebar, setVisibleSidebar] = useState(true);
   const [hasSidebar, setHasSidebar] = useState(true);
 

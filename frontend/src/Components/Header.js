@@ -95,14 +95,13 @@ const Header = ({
     placeholder: (provided, state) => ({
       ...provided,
       color: "#fa4616",
-        opacity:state.isFocused ? 0.7 : 1,
-      
+      opacity: state.isFocused ? 0.7 : 1,
     }),
     input: (provided, state) => ({
       ...provided,
       color: "#fa4616",
     }),
-    
+
     indicatorSeparator: () => ({
       display: "none",
     }),
@@ -110,36 +109,35 @@ const Header = ({
       ...provided,
       color: "#fa4616",
     }),
-    menu: (provided, state) => 
-      ({ 
-      ...provided, 
-      borderRadius:10 ,
-      width:215,
-      maxHeight:300,
+    menu: (provided, state) => ({
+      ...provided,
+      borderRadius: 10,
+      width: 215,
+      maxHeight: 300,
     }),
     menuList: (provided, state) => ({
       ...provided,
       color: "7D8288",
-      borderRadius:10 ,
-       width:'inherit',
-      height:'inherit',
-      overflow:'auto',
+      borderRadius: 10,
+      width: "inherit",
+      height: "inherit",
+      overflow: "auto",
       fontSize: 14,
       fontWeight: 300,
     }),
-    option:(provided,state) =>({
+    option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? '#FFD4C8' : 'white',
-      color: state.isFocused ? 'black' : 'black',
-      '&:active': {
-        backgroundColor: '#fa4616',
-        color: 'white'
+      backgroundColor: state.isFocused ? "#FFD4C8" : "white",
+      color: state.isFocused ? "black" : "black",
+      "&:active": {
+        backgroundColor: "#fa4616",
+        color: "white",
       },
     }),
-    singleValue:(provided,state) => ({
+    singleValue: (provided, state) => ({
       ...provided,
-      color: '#fa4616',
-    })
+      color: "#fa4616",
+    }),
   };
 
   return (
@@ -175,7 +173,7 @@ const Header = ({
         </div>
         <div className="header-filters">
           <Select
-          classNamePrefix="react-select"
+            classNamePrefix="react-select"
             options={industries}
             value={selectedIndustry}
             onChange={setSelectedIndustry}
@@ -184,7 +182,7 @@ const Header = ({
             styles={customStyles}
           />
           <Select
-          classNamePrefix="react-select"
+            classNamePrefix="react-select"
             options={provinces}
             value={selectedProvince}
             onChange={setSelectedProvince}
