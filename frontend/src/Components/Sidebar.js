@@ -12,7 +12,7 @@ import { MdLocalPhone } from "react-icons/md";
 import CoverPic from "../images/Esicbackgroundpic.png";
 import LogoPic from "../images/Logo-Responsive.png";
 
-const Sidebar = ({ onClose, selectedCompany }) => {
+const Sidebar = ({ onClose, children }) => {
   const [isVisibleSidebar, setVisibleSidebar] = useState(true);
 
   const handleSidebar = () => {
@@ -39,15 +39,18 @@ const Sidebar = ({ onClose, selectedCompany }) => {
             </div>
             <div className="sidebar-body">
               <div className="company-name">
-              <p>{selectedCompany ? selectedCompany.name : "Select a company"}</p>
+                <p>Esic Plus</p>
                 {/* <p>{children.attributes.Name}</p> */}
               </div>
               <div className="company-cover-letter">
-                 <p>{selectedCompany ? selectedCompany.description : "No company selected"}</p>
+                <p>
+                  ESIC is a research group that enhance interactivity between
+                  digital media and human beings
+                </p>
                 {/* <p>{children.attributes.Description}</p> */}
               </div>
               <div className="company-industry">
-              <p>{selectedCompany ? selectedCompany.industry : ""}</p>
+                <p>Design</p>
                 {/* <p>{children.attributes.Industry}</p> */}
               </div>
               <div className="company-about">

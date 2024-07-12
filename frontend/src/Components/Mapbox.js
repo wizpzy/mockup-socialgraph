@@ -11,7 +11,7 @@ import topImage from "../images/Art.png";
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
 
-const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
+const Mapbox = ({ selectedIndustry, location }) => {
   const mapContainerRef = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(location.lng); // default location
@@ -74,27 +74,27 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
   };
 
   function createCircularImage(imgSrc, size = 60) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      
-      ctx.beginPath();
-      ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.clip();
-
-      ctx.drawImage(img, 0, 0, size, size);
-
-      resolve(canvas.toDataURL());
-    };
-    img.onerror = reject;
-    img.src = imgSrc;
-  });
-}
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        
+        ctx.beginPath();
+        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.clip();
+  
+        ctx.drawImage(img, 0, 0, size, size);
+  
+        resolve(canvas.toDataURL());
+      };
+      img.onerror = reject;
+      img.src = imgSrc;
+    });
+  }
 
   useEffect(() => {
     if (!map.current) return;
@@ -102,7 +102,7 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
     let activeFeature = null;
     let activeCircleIds = [];
     let circlesVisible = false;
-  
+    
     const updateCircles = () => {
       if (!activeFeature || activeCircleIds.length === 0 || !circlesVisible) return;
     
@@ -132,7 +132,7 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         }
       });
     };
-
+  
     const checkAndCloseCircles = () => {
       if (!activeFeature || !circlesVisible) return;
   
@@ -387,21 +387,6 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
         }); //click clusters to zoom in
     });
 
-    map.current.on('click', 'unclustered-point', (e) => {
-      const features = map.current.queryRenderedFeatures(e.point, {
-        layers: ['unclustered-point']
-      });
-      if (features.length > 0) {
-        const feature = features[0];
-        setSelectedCompany({
-          name: feature.properties.title,
-          description: feature.properties.description,
-          industry: feature.properties.industry,
-          // Add other properties as needed
-        });
-      }
-    });
-
     map.current.on("mouseenter", "unclustered-point", (event) => {
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
@@ -451,7 +436,7 @@ const Mapbox = ({ selectedIndustry, location, setSelectedCompany }) => {
     });
 
 
-  }, [queryData, selectedIndustry, location, setSelectedCompany]);
+  }, [queryData, selectedIndustry, location]);
 
    useEffect(() => {
     // Cleanup function for clickedPoints
