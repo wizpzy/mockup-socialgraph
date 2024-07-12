@@ -9,6 +9,8 @@ const Header = ({
   queryIndustry,
   selectedIndustry,
   setSelectedIndustry,
+  searchInput,
+  setSearchInput,
   handleLocationSelect,
   selectedProvince,
   setSelectedProvince,
@@ -16,7 +18,6 @@ const Header = ({
   const [queryData, setQueryData] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {

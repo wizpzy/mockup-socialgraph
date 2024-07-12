@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import Header from "./Components/Header";
 import Mapbox from "./Components/Mapbox";
-import Sidebar from "./Components/Sidebar";
 import "./App.css";
 
 const App = () => {
@@ -11,6 +10,7 @@ const App = () => {
 
   const [selectedProvince, setSelectedProvince] = useState("all");
 
+  const [searchInput, setSearchInput] = useState("");
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
 
   useEffect(() => {
@@ -38,6 +38,8 @@ const App = () => {
         queryIndustry={queryIndustry}
         selectedIndustry={selectedIndustry}
         setSelectedIndustry={setSelectedIndustry}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
         handleLocationSelect={handleLocationSelect}
         selectedProvince={selectedProvince}
         setSelectedProvince={setSelectedProvince}
@@ -47,7 +49,6 @@ const App = () => {
         selectedIndustry={selectedIndustry}
         location={location}
       />
-      <Sidebar/>
     </div>
   );
 };
