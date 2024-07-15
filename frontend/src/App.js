@@ -13,7 +13,7 @@ const App = () => {
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedCompany, setSelectedCompany] = useState(0);
   const [selectedProvince, setSelectedProvince] = useState("all");
-  const [isVisibleSidebar, setVisibleSidebar] = useState(true);
+  const [isVisibleSidebar, setVisibleSidebar] = useState(false);
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
 

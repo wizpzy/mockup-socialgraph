@@ -12,19 +12,14 @@ import CoverPic from "../images/Esicbackgroundpic.png";
 import LogoPic from "../images/Logo-Responsive.png";
 
 const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisibleSidebar }) => {
-  // const [isVisibleSidebar, setVisibleSidebar] = useState(true);
   const handleSidebar = () => {
     setVisibleSidebar(!isVisibleSidebar);
   };
-  console.log(children)
+  // console.log(children)
   const company = useMemo(() => {
     return children.find(child => child.id === selectedCompany);
   }, [children, selectedCompany]);
-  console.log(company)
-  // useEffect(() => {
-  //     const company = children.find(child => child.id === selectedCompany);
-  //     console.log(company)
-  // },[children, selectedCompany])
+  // console.log(company)
 
   return (
     <>
