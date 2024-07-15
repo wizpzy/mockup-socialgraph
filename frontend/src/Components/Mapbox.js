@@ -5,6 +5,7 @@ import "./filter.css";
 import "./Mapbox.css";
 import provinces from "../data/provinces.json";
 import { createCircularImage } from '../utils/manageImage';
+import projectPic from '../images/smile.png'
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
@@ -279,7 +280,7 @@ const Mapbox = ({
       const selected_company_data = queryData.find((data) => {
         return data.id === feature.properties.id
       });
-      console.log("selected company data: ",selected_company_data);
+      console.log("selected company data: ", selected_company_data);
       setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
       setVisibleSidebar(true);
       setHasSidebar(true);
@@ -334,7 +335,7 @@ const Mapbox = ({
         // create each project layer
         overlays.forEach(async (overlay, index) => {
           // if project data is loaded
-          if (selected_company_data.attributes.Projects.data[index]) { 
+          if (selected_company_data.attributes.Projects.data[index]) {
             // project source
             map.current.addSource(`project-${index}`, {
               type: 'geojson',
@@ -354,34 +355,38 @@ const Mapbox = ({
               type: 'circle',
               source: `project-${index}`,
               paint: {
-                'circle-color': 'rgba(255,0,0,1)',
-                'circle-radius': 25,
+                'circle-color': 'rgba(255,255,255,1)',
+                'circle-radius': 24,
                 "circle-stroke-width": 3,
                 "circle-stroke-color": "#FF7E00",
               }
             });
             // preparing project image layer
-              // if project image is loaded
-            if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) { 
+            let circularImageData
+            // if project image is loaded
+            if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) {
               const imagePath = selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url;
-              const circularImageDataUrl = await createCircularImage('http://localhost:1337' + imagePath);
-              map.current.loadImage(circularImageDataUrl, (err, image) => {
-                if (err) throw err;
-                if (!map.current.hasImage(`project-image-${index}`))
-                  map.current.addImage(`project-image-${index}`, image);
+              circularImageData = await createCircularImage('http://localhost:1337' + imagePath);
+            }
+            else {
+              circularImageData = await createCircularImage(projectPic);
+            }
+            map.current.loadImage(circularImageData, (err, image) => {
+              if (err) throw err;
+              if (!map.current.hasImage(`project-image-${index}`))
+                map.current.addImage(`project-image-${index}`, image);
+            });
+            // project image layer
+            if (!map.current.getLayer(`project-image-layer-${index}`)) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
+              map.current.addLayer({
+                id: `project-image-layer-${index}`,
+                type: 'symbol',
+                source: `project-${index}`,
+                layout: {
+                  'icon-image': `project-image-${index}`,
+                  'icon-size': 0.82,
+                }
               });
-              // project image layer
-              if (!map.current.getLayer(`project-image-layer-${index}`)) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
-                map.current.addLayer({
-                  id: `project-image-layer-${index}`,
-                  type: 'symbol',
-                  source: `project-${index}`,
-                  layout: {
-                    'icon-image': `project-image-${index}`,
-                    'icon-size': 0.82,
-                  }
-                });
-              }
             }
           }
         });
@@ -398,7 +403,7 @@ const Mapbox = ({
             const project_data = selected_company_data.attributes.Projects.data.find((data) => {
               return data.id === feature._data.properties.id
             });
-            console.log("project data: ",project_data);
+            console.log("project data: ", project_data);
           })
         }
       }
