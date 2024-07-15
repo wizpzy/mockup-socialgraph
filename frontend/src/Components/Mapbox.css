@@ -1,6 +1,6 @@
-/* .Mapbox {
+.Mapbox {
   height: 100%;
-} */
+}
 
 .Map-info {
   background-color: rgb(35 55 75 / 90%);
@@ -11,10 +11,12 @@
   position: absolute;
   margin: 12px;
   border-radius: 4px;
+  margin-top: 68px; /* 56 + 12 */
 }
 
 .map-container {
-  height: 639px;
+  height: 100%;
+  margin-top: -56px;
 }
 
 .mapboxgl-popup-close-button {
