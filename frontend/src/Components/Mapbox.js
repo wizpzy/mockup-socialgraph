@@ -178,7 +178,6 @@ const Mapbox = ({
             ],
             "circle-radius": 8,
             "circle-stroke-width": 5,
-            // "circle-stroke-color": "rgba(255, 87, 51, 0.5)",
             "circle-stroke-color": [
               "match",
               ["get", "industry"],
@@ -222,10 +221,8 @@ const Mapbox = ({
           source: "provinces",
           paint: {
             "fill-color": "rgba(0, 0, 0, 0)",
-            // 'fill-outline-color': 'rgba(255, 0, 0, 0.7)'
           },
         });
-
         map.current.moveLayer("companies-clusters", "unclustered-point");
         map.current.moveLayer("companies-clusters", "cluster-count");
         map.current.moveLayer("provinces-layer", "companies-clusters");
@@ -249,8 +246,7 @@ const Mapbox = ({
       map.current
         .getSource("companies")
         .getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err) return;
-
+          if (err) throw err;
           map.current.easeTo({
             center: features[0].geometry.coordinates,
             zoom: zoom,
@@ -366,17 +362,17 @@ const Mapbox = ({
               "circle-stroke-color": "#FF7E00",
             }
           });
-          if (selected_company_data.attributes.Projects.data[index]) {
-            if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) {
+          if (selected_company_data.attributes.Projects.data[index]) { // if project data is loaded
+            if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) { // if project image is loaded
               const imagePath = selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url
               const circularImageDataUrl = await createCircularImage('http://localhost:1337' + imagePath);
               map.current.loadImage(circularImageDataUrl, (err, image) => {
                 if (err) throw err;
                 if (!map.current.hasImage(`project-image-${index}`))
-                  map.current.addImage(`project-image-${index}`, image) // to be modified ?
+                  map.current.addImage(`project-image-${index}`, image)
               });
               // project image layer
-              if (!map.current.getLayer(`project-image-layer-${index}`)) {
+              if (!map.current.getLayer(`project-image-layer-${index}`)) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
                 map.current.addLayer({
                   id: `project-image-layer-${index}`,
                   type: 'symbol',
@@ -397,99 +393,6 @@ const Mapbox = ({
           })
         })
       }
-
-      // const circularImageDataUrl = await createCircularImage('http://localhost:1337/uploads/thumbnail_eatlab_project_0abe93b10e.png');
-      // map.current.loadImage(circularImageDataUrl, (err, image) => {
-      //   if (err) throw err;
-      //   if (!map.current.hasImage('project-image'))
-      //     map.current.addImage('project-image', image) // to be modified
-      // })
-
-      // if (map.current.getSource('highlight-projects') != null) {
-      //   map.current.removeLayer('project-images')
-      //   map.current.removeLayer('project-overlays')
-      //   map.current.removeSource('highlight-projects')
-      // }
-      // map.current.addSource('highlight-projects', {
-      //   type: 'geojson',
-      //   data: {
-      //     type: 'FeatureCollection',
-      //     features: [
-      //       { // left
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0] - (base_offset * scale),
-      //             feature.geometry.coordinates[1]
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Left'
-      //         }
-      //       },
-      //       { // right
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0] + (base_offset * scale),
-      //             feature.geometry.coordinates[1]
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Right'
-      //         }
-      //       },
-      //       { // above
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0],
-      //             feature.geometry.coordinates[1] + (base_offset * scale)
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Above'
-      //         }
-      //       }
-      //     ],
-      //     properties: {
-      //       parent_node: feature
-      //     }
-      //   }
-      // });
-
-      // map.current.addLayer({
-      //   id: 'project-overlays',
-      //   type: 'circle',
-      //   source: 'highlight-projects',
-      //   paint: {
-      //     'circle-color': 'rgba(255,0,0,1)',
-      //     'circle-radius': 25,
-      //     "circle-stroke-width": 3,
-      //     "circle-stroke-color": "#FF7E00",
-      //   }
-      // });
-
-      // map.current.addLayer({
-      //   id: 'project-images',
-      //   type: 'symbol',
-      //   source: 'highlight-projects',
-      //   layout: {
-      //     'icon-image': 'project-image',
-      //     'icon-size': 0.82,
-      //   }
-      // });
-
-      // map.current.on('click', ['project-images', 'project-overlays'], (event) => {
-      //   const features = map.current.queryRenderedFeatures(event.point, {
-      //     layers: ["project-overlays"],
-      //   });
-
-      //   map.current.setPaintProperty('project-overlays', 'circle-stroke-color', '#FFCE00')
-      // })
     });
 
     // reset overlays position
@@ -510,11 +413,6 @@ const Mapbox = ({
             properties: {
               parent_node: feature,
               position: 'Left',
-              project: {
-                // id: feature.properties.project[0].id,
-                // imageUrl: feature.properties.projects[0].attributes.Project.data.attributes.Image.data ? 
-                // feature.properties.projects[0].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url : null
-              },
             }
           },
           {
@@ -528,11 +426,6 @@ const Mapbox = ({
             properties: {
               parent_node: feature,
               position: 'Right',
-              project: {
-                // id: feature.properties.project[1].id,
-                // imageUrl: feature.properties.projects[1].attributes.Project.data.attributes.Image.data ? 
-                // feature.properties.projects[1].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url : null
-              },
             }
           },
           {
@@ -546,11 +439,6 @@ const Mapbox = ({
             properties: {
               parent_node: feature,
               position: 'Above',
-              project: {
-                // id: feature.properties.project[2].id,
-                // imageUrl: feature.properties.projects[2].attributes.Project.data.attributes.Image.data ? 
-                // feature.properties.projects[2].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url : null
-              },
             }
           }
         ]
@@ -563,65 +451,11 @@ const Mapbox = ({
                 position: overlay.properties.position,
                 parent_node: overlay.properties.parent_node
               }
-            })
+            });
           }
-        })
+        });
       }
-
-      // if (map.current.getSource('project-0') != null) {
-      //   console.log(map.current.getSource('project-0'))
-      //   const feature = map.current.getSource('project-0')._data.properties.parent_node
-      //   const base_offset = 0.0003;
-      //   const scale = Math.pow(2, 18 - map.current.getZoom());
-      //   map.current.getSource('project-0').setData({
-      //     type: 'FeatureCollection',
-      //     features: [
-      //       { // left
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0] - (base_offset * scale),
-      //             feature.geometry.coordinates[1]
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Left'
-      //         }
-      //       },
-      //       { // right
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0] + (base_offset * scale),
-      //             feature.geometry.coordinates[1]
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Right'
-      //         }
-      //       },
-      //       { // above
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: [
-      //             feature.geometry.coordinates[0],
-      //             feature.geometry.coordinates[1] + (base_offset * scale)
-      //           ]
-      //         },
-      //         properties: {
-      //           position: 'Above'
-      //         }
-      //       }
-      //     ],
-      //     properties: {
-      //       parent_node: feature
-      //     }
-      //   })
-      // }
-    })
+    });
 
     // remove project overlays if company cluster is invisible
     map.current.on('zoom', () => {
@@ -630,15 +464,15 @@ const Mapbox = ({
           map.current.project(activeFeature.geometry.coordinates),
           { layers: ['unclustered-point'] }
         );
-        const feature = features[0]
+        const feature = features[0];
         if (!feature) {
           for (let i = 0; i < 3; i++) {
             if (map.current.getLayer(`project-image-layer-${i}`))
-              map.current.removeLayer(`project-image-layer-${i}`)
+              map.current.removeLayer(`project-image-layer-${i}`);
             if (map.current.getLayer(`project-overlays-${i}`))
-              map.current.removeLayer(`project-overlays-${i}`)
+              map.current.removeLayer(`project-overlays-${i}`);
             if (map.current.getSource(`project-${i}`))
-              map.current.removeSource(`project-${i}`)
+              map.current.removeSource(`project-${i}`);
           }
         }
       }
