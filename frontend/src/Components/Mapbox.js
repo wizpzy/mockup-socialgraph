@@ -227,6 +227,15 @@ const Mapbox = ({
         map.current.moveLayer("companies-clusters", "cluster-count");
         map.current.moveLayer("provinces-layer", "companies-clusters");
       }
+      // clear project layers on industry changed
+      for (let i = 0; i < 3; i++) {
+        if (map.current.getLayer(`project-image-layer-${i}`))
+          map.current.removeLayer(`project-image-layer-${i}`);
+        if (map.current.getLayer(`project-overlays-${i}`))
+          map.current.removeLayer(`project-overlays-${i}`);
+        if (map.current.getSource(`project-${i}`))
+          map.current.removeSource(`project-${i}`);
+      }
     };
 
     if (map.current.isStyleLoaded()) {
@@ -331,11 +340,11 @@ const Mapbox = ({
         const overlays = overlays_.slice(0, project_amount) // handling for different amount of projects
         for (let i = 0; i < 3; i++) {
           if (map.current.getLayer(`project-image-layer-${i}`))
-            map.current.removeLayer(`project-image-layer-${i}`)
+            map.current.removeLayer(`project-image-layer-${i}`);
           if (map.current.getLayer(`project-overlays-${i}`))
-            map.current.removeLayer(`project-overlays-${i}`)
+            map.current.removeLayer(`project-overlays-${i}`);
           if (map.current.getSource(`project-${i}`))
-            map.current.removeSource(`project-${i}`)
+            map.current.removeSource(`project-${i}`);
         }
         overlays.forEach(async (overlay, index) => {
           // project source
