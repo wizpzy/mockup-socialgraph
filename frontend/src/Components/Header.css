@@ -1,12 +1,159 @@
 /* Header.css */
 
 .header {
+  background-color: #fa4616;
+  width: 100%;
+  height: 56px;
+  position: sticky; /* Ensure the header has a positioning context */
+  top: 0px;
+  z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
+  align-content: center;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 16px;
+}
+
+.logo {
+  height: 45px;
+}
+
+.header-filters {
+  display: flex;
+  width: 445px;
+  height: 30px;
+  gap: 15px;
+}
+.filter-dropdown {
+  width: 215px;
+}
+
+.react-select__menu-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+  background: #cecece;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+  background: #fa4616;
+  border-radius: 20px;
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+  background-color: #fcb19d;
+  border-radius: 20px;
+  padding: 0 10px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.search-input {
+  border: none;
+  height: 28px;
+  width: 349px;
+  background-color: transparent;
+  font-family: "Kanit", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
+}
+
+.search-input::placeholder {
+  color: white;
+}
+
+.search-input:focus-visible {
+  background-color: transparent;
+  border: transparent;
+  outline: transparent;
+  color: white;
+}
+
+.search-icon {
+  right: 15px; /* Adjust icon position */
+  cursor: pointer;
+  color: white; /* Adjust icon color */
+  font-size: 16px; /* Adjust icon size */
+}
+
+.companySuggestion {
+  display: flex;
+  flex-direction: column;
+  width: 399px;
+  appearance: none;
+  position: absolute;
+  background-color: white;
+  top: 35px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  justify-content: start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding: 0;
+  max-height: 220px;
+}
+
+.companySuggestion li {
+  padding: 5px;
+  display: flex;
+  font-size: 13px;
+  color: #fa4616;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  background-color: white;
+}
+
+.companySuggestion li:hover {
+  background-color: #f6f4f4;
+}
+
+@media only screen and (max-width: 431px) {
+  .header {
+    background-color: #fa4616;
+    width: 100%;
+    height: 88px;
+    position: sticky; /* Ensure the header has a positioning context */
+    top: 0px;
+    z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
+    align-content: center;
+    overflow: hidden;
+  }
+  .logo {
+    height: 28px;
+  }
+
+  .search-input {
+    border: none;
+    height: 23px;
+    width: 191px;
+    background-color: transparent;
+    font-family: "Kanit", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+  }
+
+  .header-filters {
+    display: none;
+  }
+}
+
+/* .header {
     background-color: #FA4616;
     width: 100%;
     height: 56px;
-    position: sticky; /* Ensure the header has a positioning context */
+    position: sticky; 
     top:0px;
-    z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
+    z-index: 1000; 
     align-content: center;
 }
 
@@ -59,7 +206,6 @@
     background-color: #F6F4F4 !important;
 }
 
-/* Styles for the search bar */
 .header-search {
     display: flex;
     align-items: center;
@@ -93,10 +239,10 @@
 }
 
 .search-icon {
-    right: 15px; /* Adjust icon position */
+    right: 15px; 
     cursor: pointer;
-    color: white; /* Adjust icon color */
-    font-size: 16px; /* Adjust icon size */
+    color: white; 
+    font-size: 16px; 
 }
 
 .companySuggestion {
@@ -130,4 +276,4 @@
 
 .companySuggestion li:hover{
     background-color: #F6F4F4;
-}
+} */

@@ -11,15 +11,18 @@ import { MdLocalPhone } from "react-icons/md";
 import CoverPic from "../images/Esicbackgroundpic.png";
 import LogoPic from "../images/Logo-Responsive.png";
 
-const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisibleSidebar }) => {
+const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisibleSidebar, hasSidebar, setHasSidebar }) => {
   const handleSidebar = () => {
     setVisibleSidebar(!isVisibleSidebar);
   };
-  // console.log(children)
+
+  const handleHasSidebar = () => {
+    setHasSidebar(!hasSidebar);
+  };
+
   const company = useMemo(() => {
     return children.find(child => child.id === selectedCompany);
   }, [children, selectedCompany]);
-  // console.log(company)
 
   return (
     <>
@@ -27,7 +30,7 @@ const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisi
         <div className="sidebar">
           <div className="sidebar-content">
             <div className="sidebar-header">
-              <button className="close-btn" onClick={onClose}>
+              <button className="close-btn" onClick={handleHasSidebar}>
                 &times;
               </button>
               <div className="company-pic">

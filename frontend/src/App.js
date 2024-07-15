@@ -10,9 +10,10 @@ import "./App.css";
 const App = () => {
   const [queryData, setQueryData] = useState([]);
   const [queryIndustry, setQueryIndustry] = useState([]);
-  const [selectedIndustry, setSelectedIndustry] = useState("all");
+  const [selectedIndustry, setSelectedIndustry] = useState({ value: "all", label: "All Industries" });
   const [selectedCompany, setSelectedCompany] = useState(0);
-  const [selectedProvince, setSelectedProvince] = useState("all");
+  const [selectedProvince, setSelectedProvince] = useState({ value: "all", label: "All Provinces" });
+  const [hasSidebar, setHasSidebar] = useState(true);
   const [isVisibleSidebar, setVisibleSidebar] = useState(false);
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
@@ -40,6 +41,7 @@ const App = () => {
     setLocation({ lng, lat });
   };
 
+
   return (
     <div className="App">
       <Header
@@ -52,20 +54,24 @@ const App = () => {
       />
       <Mapbox
         queryData={queryData}
-        selectedIndustry={selectedIndustry}
-        selectedProvince={selectedProvince}
+        selectedIndustry={selectedIndustry.value}
+        selectedProvince={selectedProvince.value}
         selectedCompany={selectedCompany}
         setSelectedCompany={setSelectedCompany}
         location={location}
         isVisibleSidebar={isVisibleSidebar}
         setVisibleSidebar={setVisibleSidebar}
+        setHasSidebar={setHasSidebar}
       />
+      { hasSidebar &&
       <Sidebar
         children={queryData}
         selectedCompany={selectedCompany}
         isVisibleSidebar={isVisibleSidebar}
         setVisibleSidebar={setVisibleSidebar}
-      />
+        hasSidebar={hasSidebar}
+        setHasSidebar={setHasSidebar}
+      />}
       {/* <ProductSidebar/> */}
     </div>
   );
