@@ -18,6 +18,9 @@ const queryObject_main = {
         }
       }
     },
+    pagination: {
+        pageSize: 100,
+      },
   }
 
 const qs_main = qs.stringify(queryObject_main, {encodeValuesOnly: true});
