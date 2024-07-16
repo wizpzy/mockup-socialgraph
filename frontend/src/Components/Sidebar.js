@@ -11,7 +11,7 @@ import { MdLocalPhone } from "react-icons/md";
 import CoverPic from "../images/Esicbackgroundpic.png";
 import LogoPic from "../images/Logo-Responsive.png";
 
-const Sidebar = ({ onClose, children, selectedCompany, isVisibleSidebar, setVisibleSidebar, hasSidebar, setHasSidebar }) => {
+const Sidebar = ({ children, selectedCompany, isVisibleSidebar, setVisibleSidebar, hasSidebar, setHasSidebar }) => {
   const handleSidebar = () => {
     setVisibleSidebar(!isVisibleSidebar);
   };

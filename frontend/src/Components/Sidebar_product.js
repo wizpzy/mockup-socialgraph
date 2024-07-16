@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import "./Sidebar_product.css"; // Import CSS for styling
 import {
   IoChevronBackSharp,
@@ -6,20 +6,30 @@ import {
 } from "react-icons/io5";
 import PDCoverPic from "../images/EatlabCoverPic.png";
 
-const Sidebar = ({ onClose, children }) => {
-  const [isVisibleSidebar, setVisibleSidebar] = useState(true);
-
+const Sidebar = ({ children, selectedCompany, selectedProduct, isVisibleProductSidebar, setVisibleProductSidebar, hasProductSidebar, setHasProductSidebar }) => {
   const handleSidebar = () => {
-    setVisibleSidebar(!isVisibleSidebar);
+    setVisibleProductSidebar(!isVisibleProductSidebar);
   };
+
+  const handleHasSidebar = () => {
+    setHasProductSidebar(!hasProductSidebar);
+  };
+
+  const company = useMemo(() => {
+    return children.find(child => child.id === selectedCompany);
+  }, [children, selectedCompany]);
+    const product = company.attributes.Projects.data.find((data) => {
+      return data.attributes.Project.data.id === selectedProduct
+    }).attributes.Project.data
+  
 
   return (
     <>
-      {isVisibleSidebar ? (
+      {isVisibleProductSidebar ? (
         <div className="pdsidebar">
           <div className="pdsidebar-content">
             <div className="pdsidebar-header">
-              <button className="close-btn" onClick={onClose}>
+              <button className="close-btn" onClick={handleHasSidebar}>
                 &times;
               </button>
               <div className="pd-pic">
@@ -29,8 +39,14 @@ const Sidebar = ({ onClose, children }) => {
             </div>
             <div className="pdsidebar-body">
               <div className="pd-name">
-                <p>EatLab</p>
-                {/* <p>{children.attributes.Name}</p> */}
+                {/* <p>EatLab</p> */}
+                <p>
+                  {
+                    selectedProduct !== 0 && product ?
+                    product.attributes.Name :
+                    "Product Name"
+                  }
+                </p>
               </div>
               <div className="pd-type">
                 <p>Interactive Art</p>
@@ -38,10 +54,16 @@ const Sidebar = ({ onClose, children }) => {
               </div>
               <div className="pd-about">
                 <b>About</b>
-                <p>
+                {/* <p>
                 Restaurants with an Interactive Menu to serve as a data center for studying consumer behavior. To analyze data and use it in the product design process to meet consumer needs as much as possible.
+                </p> */}
+                <p>
+                  {
+                    selectedProduct !== 0 && product ?
+                    product.attributes.Description :
+                    "Product Description"
+                  }
                 </p>
-                {/* <p>{children.attributes.About}</p> */}
               </div>
               <div className="view-pd-detail">
                   View Product <IoChevronForwardSharp />

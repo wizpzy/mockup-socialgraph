@@ -3,7 +3,7 @@ import Axios from "axios";
 import Header from "./Components/Header";
 import Mapbox from "./Components/Mapbox";
 import Sidebar from "./Components/Sidebar";
-// import ProductSidebar from "./Components/Sidebar_product";
+import ProductSidebar from "./Components/Sidebar_product";
 import { qs_main } from "./utils/queryString";
 import "./App.css";
 
@@ -12,9 +12,12 @@ const App = () => {
   const [queryIndustry, setQueryIndustry] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState({ value: "all", label: "All Industries" });
   const [selectedCompany, setSelectedCompany] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState(0);
   const [selectedProvince, setSelectedProvince] = useState({ value: "all", label: "All Provinces" });
   const [hasSidebar, setHasSidebar] = useState(true);
   const [isVisibleSidebar, setVisibleSidebar] = useState(false);
+  const [hasProductSidebar, setHasProductSidebar] = useState(false);
+  const [isVisibleProductSidebar, setVisibleProductSidebar] = useState(false);
 
   const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
 
@@ -56,22 +59,37 @@ const App = () => {
         queryData={queryData}
         selectedIndustry={selectedIndustry.value}
         selectedProvince={selectedProvince.value}
-        selectedCompany={selectedCompany}
         setSelectedCompany={setSelectedCompany}
+        setSelectedProduct={setSelectedProduct}
         location={location}
-        isVisibleSidebar={isVisibleSidebar}
         setVisibleSidebar={setVisibleSidebar}
         setHasSidebar={setHasSidebar}
+        setVisibleProductSidebar={setVisibleProductSidebar}
+        setHasProductSidebar={setHasProductSidebar}
       />
-      { hasSidebar &&
-      <Sidebar
-        children={queryData}
-        selectedCompany={selectedCompany}
-        isVisibleSidebar={isVisibleSidebar}
-        setVisibleSidebar={setVisibleSidebar}
-        hasSidebar={hasSidebar}
-        setHasSidebar={setHasSidebar}
-      />}
+      {
+        (
+          hasSidebar &&
+          <Sidebar
+            children={queryData}
+            selectedCompany={selectedCompany}
+            isVisibleSidebar={isVisibleSidebar}
+            setVisibleSidebar={setVisibleSidebar}
+            hasSidebar={hasSidebar}
+            setHasSidebar={setHasSidebar}
+          />) || (
+          hasProductSidebar &&
+          <ProductSidebar
+            children={queryData}
+            selectedCompany={selectedCompany}
+            selectedProduct={selectedProduct}
+            isVisibleProductSidebar={isVisibleProductSidebar}
+            setVisibleProductSidebar={setVisibleProductSidebar}
+            hasProductSidebar={hasProductSidebar}
+            setHasProductSidebar={setHasProductSidebar}
+          />
+        )
+      }
       {/* <ProductSidebar/> */}
     </div>
   );

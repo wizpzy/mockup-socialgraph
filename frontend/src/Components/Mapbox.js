@@ -15,10 +15,12 @@ const Mapbox = ({
   selectedIndustry,
   selectedProvince,
   setSelectedCompany,
-  isVisibleSidebar,
-  setVisibleSidebar,
+  setSelectedProduct,
   location,
+  setVisibleSidebar,
   setHasSidebar,
+  setVisibleProductSidebar,
+  setHasProductSidebar,
 }) => {
   const mapContainerRef = useRef(null);
   const map = useRef(null);
@@ -26,6 +28,7 @@ const Mapbox = ({
   const [lat, setLat] = useState(location.lat);
   const [zoom, setZoom] = useState(18);
   const popupRef = useRef(null);
+  
 
   useEffect(() => {
     console.log("query data : ", queryData);
@@ -72,6 +75,8 @@ const Mapbox = ({
 
   const clearOverlays = () => {
     for (let i = 0; i < 3; i++) {
+      if (map.current.hasImage(`project-image-${i}`))
+        map.current.removeImage(`project-image-${i}`)
       if (map.current.getLayer(`project-image-layer-${i}`))
         map.current.removeLayer(`project-image-layer-${i}`);
       if (map.current.getLayer(`project-overlays-${i}`))
@@ -253,7 +258,7 @@ const Mapbox = ({
     }
 
     //click clusters to zoom in
-    map.current.on("click", "companies-clusters", (e) => {
+    map.current.on('click', "companies-clusters", (e) => {
       const features = map.current.queryRenderedFeatures(e.point, {
         layers: ["companies-clusters"],
       });
@@ -270,7 +275,7 @@ const Mapbox = ({
     });
 
     //click to show company information in the sidebar & show project overlays
-    map.current.on("click", "unclustered-point", async (event) => {
+    map.current.on('click', "unclustered-point", async (event) => {
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
       });
@@ -280,55 +285,58 @@ const Mapbox = ({
       const selected_company_data = queryData.find((data) => {
         return data.id === feature.properties.id
       });
-      console.log("selected company data: ", selected_company_data);
-      setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
-      setVisibleSidebar(true);
-      setHasSidebar(true);
-
-      const base_offset = 0.0003;
-      const scale = Math.pow(2, 18 - map.current.getZoom());
-      const overlays_ = [
-        {
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              feature.geometry.coordinates[0] - (base_offset * scale),
-              feature.geometry.coordinates[1]
-            ]
-          },
-          properties: {
-            parent_node: feature,
-            position: 'Left'
-          }
-        },
-        {
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              feature.geometry.coordinates[0] + (base_offset * scale),
-              feature.geometry.coordinates[1]
-            ]
-          },
-          properties: {
-            parent_node: feature,
-            position: 'Right'
-          }
-        },
-        {
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              feature.geometry.coordinates[0],
-              feature.geometry.coordinates[1] + (base_offset * scale)
-            ]
-          },
-          properties: {
-            parent_node: feature,
-            position: 'Above'
-          }
-        }
-      ]
       if (selected_company_data) {
+        console.log("selected company data: ", selected_company_data);
+        setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
+        setVisibleProductSidebar(false);
+        setHasProductSidebar(false);
+        setVisibleSidebar(true);
+        setHasSidebar(true);
+
+        const base_offset = 0.0003;
+        const scale = Math.pow(2, 18 - map.current.getZoom());
+        const overlays_ = [
+          {
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                feature.geometry.coordinates[0] - (base_offset * scale),
+                feature.geometry.coordinates[1]
+              ]
+            },
+            properties: {
+              parent_node: feature,
+              position: 'Left'
+            }
+          },
+          {
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                feature.geometry.coordinates[0] + (base_offset * scale),
+                feature.geometry.coordinates[1]
+              ]
+            },
+            properties: {
+              parent_node: feature,
+              position: 'Right'
+            }
+          },
+          {
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                feature.geometry.coordinates[0],
+                feature.geometry.coordinates[1] + (base_offset * scale)
+              ]
+            },
+            properties: {
+              parent_node: feature,
+              position: 'Above'
+            }
+          }
+        ]
+
         const project_amount = selected_company_data.attributes.Projects.data.length
         const overlays = overlays_.slice(0, project_amount) // handling for different amount of projects
         clearOverlays();
@@ -399,12 +407,23 @@ const Mapbox = ({
             }
             map.current.setPaintProperty(`project-overlays-${i}`, 'circle-stroke-color', '#FFCE00')
             const feature = map.current.getSource(`project-${i}`);
-            // console.log(feature)
-            const project_data = selected_company_data.attributes.Projects.data.find((data) => {
+            console.log('feature: ', feature)
+            console.log('selected company: ', selected_company_data.attributes.Projects.data)
+            const project = selected_company_data.attributes.Projects.data.find((data) => {
               return data.id === feature._data.properties.id
             });
-            console.log("project data: ", project_data);
-          })
+            console.log("project : ", project);
+            // wait until project is loaded
+            if (project) {
+              const project_data = project.attributes.Project.data
+              console.log("project data: ", project_data);
+              setSelectedProduct(project_data ? project_data.id : 0);
+              setVisibleSidebar(false);
+              setHasSidebar(false);
+              setVisibleProductSidebar(true);
+              setHasProductSidebar(true);
+            }
+          });
         }
       }
     });
