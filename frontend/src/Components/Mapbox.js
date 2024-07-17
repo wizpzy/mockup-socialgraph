@@ -5,8 +5,8 @@ import "./filter.css";
 import "./Mapbox.css";
 import provinces from "../data/provinces.json";
 
-mapboxgl.accessToken =
-  "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
+// mapboxgl.accessToken =
+//   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
 
 const Mapbox = ({
   queryData,

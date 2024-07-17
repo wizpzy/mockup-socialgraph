@@ -52,7 +52,7 @@ const App = () => {
         selectedProvince={selectedProvince}
         setSelectedProvince={setSelectedProvince}
       />
-      <Mapbox
+      {/* <Mapbox
         queryData={queryData}
         selectedIndustry={selectedIndustry.value}
         selectedProvince={selectedProvince.value}
@@ -62,7 +62,7 @@ const App = () => {
         isVisibleSidebar={isVisibleSidebar}
         setVisibleSidebar={setVisibleSidebar}
         setHasSidebar={setHasSidebar}
-      />
+      /> */}
       { hasSidebar &&
       <Sidebar
         children={queryData}
