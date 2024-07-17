@@ -5,7 +5,7 @@ import "./filter.css";
 import "./Mapbox.css";
 import provinces from "../data/provinces.json";
 import { createCircularImage } from '../utils/manageImage';
-import projectPic from '../images/smile.png'
+import tempPic from '../images/smile.png'
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9ic2FudGEiLCJhIjoiY2x4dmM4cmNpMDcyYTJsc2FpMGw0YXhrOSJ9.jEQ-CikwyN4C9yX5xtGUBA";
@@ -28,7 +28,7 @@ const Mapbox = ({
   const [lat, setLat] = useState(location.lat);
   const [zoom, setZoom] = useState(18);
   const popupRef = useRef(null);
-  
+
 
   useEffect(() => {
     console.log("query data : ", queryData);
@@ -92,6 +92,14 @@ const Mapbox = ({
       if (map.current.getSource(`project-${i}`))
         map.current.removeSource(`project-${i}`);
     }
+    if (map.current.hasImage('company-logo-image'))
+      map.current.removeImage('company-logo-image')
+    if (map.current.getLayer('company-logo-image-layer'))
+      map.current.removeLayer('company-logo-image-layer')
+    if (map.current.getLayer('company-logo-overlay'))
+      map.current.removeLayer('company-logo-overlay')
+    if (map.current.getSource('selected-company'))
+      map.current.removeSource('selected-company')
   }
 
   useEffect(() => {
@@ -287,6 +295,7 @@ const Mapbox = ({
         layers: ["unclustered-point"],
       });
       const feature = features[0];
+      console.log(feature)
       activeFeature = feature;
       // retrieve selected company data
       const selected_company_data = queryData.find((data) => {
@@ -348,12 +357,59 @@ const Mapbox = ({
         const overlays = overlays_.slice(0, project_amount) // handling for different amount of projects
         clearOverlays();
 
+        if (!map.current.getSource('selected-company')) {
+          map.current.addSource('selected-company', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              geometry: feature._geometry,
+            }
+          })
+          if (!map.current.getLayer('company-logo-overlay')) {
+            map.current.addLayer({
+              id: 'company-logo-overlay',
+              type: 'circle',
+              source: 'selected-company',
+              paint: {
+                'circle-color': 'rgba(255,255,255,1)',
+                'circle-radius': 60,
+                "circle-stroke-width": 4,
+                "circle-stroke-color": "#FF7E00",
+              }
+            })
+            let circularImageData
+            if (feature.properties.imageUrl) {
+              circularImageData = await createCircularImage('http://localhost:1337' + feature.properties.imageUrl);
+            } else {
+              circularImageData = await createCircularImage(tempPic);
+            }
+            map.current.loadImage(circularImageData, (err, image) => {
+              if (err) throw err;
+              if (!map.current.hasImage('company-logo-image'))
+                map.current.addImage('company-logo-image', image);
+            });
+            // company image layer
+            if (!map.current.getLayer('company-logo-image-layer')) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
+              map.current.addLayer({
+                id: 'company-logo-image-layer',
+                type: 'symbol',
+                source: 'selected-company',
+                layout: {
+                  'icon-image': 'company-logo-image',
+                  'icon-size': 2,
+                }
+              });
+            }
+          }
+        }
+        
         // create each project layer
         overlays.forEach(async (overlay, index) => {
           // if project data is loaded
           if (selected_company_data.attributes.Projects.data[index]) {
             // project source
-            map.current.addSource(`project-${index}`, {
+            if (!map.current.getSource(`project-${index}`)) {
+              map.current.addSource(`project-${index}`, {
               type: 'geojson',
               data: {
                 type: 'Feature',
@@ -365,8 +421,11 @@ const Mapbox = ({
                 }
               }
             });
+            }
+            
             // project circle layer
-            map.current.addLayer({
+            if (!map.current.getLayer(`project-overlays-${index}`)) {
+              map.current.addLayer({
               id: `project-overlays-${index}`,
               type: 'circle',
               source: `project-${index}`,
@@ -377,15 +436,16 @@ const Mapbox = ({
                 "circle-stroke-color": "#FF7E00",
               }
             });
+          }
+            
             // preparing project image layer
             let circularImageData
             // if project image is loaded
             if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) {
               const imagePath = selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url;
               circularImageData = await createCircularImage('http://localhost:1337' + imagePath);
-            }
-            else {
-              circularImageData = await createCircularImage(projectPic);
+            } else {
+              circularImageData = await createCircularImage(tempPic);
             }
             map.current.loadImage(circularImageData, (err, image) => {
               if (err) throw err;
@@ -583,8 +643,8 @@ const Mapbox = ({
             })
             console.log(map.current.getSource('Cooperate-line'))
           }
-            
-          
+
+
         }
       }
     });
