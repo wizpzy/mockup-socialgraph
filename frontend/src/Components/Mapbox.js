@@ -530,7 +530,7 @@ const Mapbox = ({
                 ])
                 const offScreenIntersection = turf.lineIntersect(borderLine, lineToCompany).features[0];
                 const direction = turf.bearing(offScreenIntersection, turf.point(project_source._data.geometry.coordinates))
-                const offScreenPoint = turf.destination(offScreenIntersection, pixelToMeter(75) / 1000, direction)
+                const offScreenPoint = turf.destination(offScreenIntersection, pixelToMeter(50) / 1000, direction)
                 offScreenPoint.properties = {
                   company_lng: company_location.geometry.coordinates[0],
                   company_lat: company_location.geometry.coordinates[1],
