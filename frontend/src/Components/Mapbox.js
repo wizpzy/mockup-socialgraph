@@ -273,7 +273,7 @@ const Mapbox = ({
   const pixelToMeter = (pixel) => {
     const zoomLevel = map.current.getZoom();
     let mpp;
-    mpp = 156543.03 * Math.cos(map.current.getCenter().lat) / Math.pow(2, zoomLevel); // source: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Resolution_and_Scale
+    mpp = 156543.03 * Math.cos(map.current.getCenter().lat * Math.PI / 180) / Math.pow(2, zoomLevel); // source: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Resolution_and_Scale
     return (pixel * mpp)
   }
 
@@ -671,6 +671,7 @@ const Mapbox = ({
           feature.properties.company_lng,
           feature.properties.company_lat,
         ],
+        zoom: 16
       });
     })
 
