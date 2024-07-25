@@ -14,7 +14,7 @@ const App = () => {
   const [selectedCompany, setSelectedCompany] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState(0);
   const [selectedProvince, setSelectedProvince] = useState({ value: "all", label: "All Provinces" });
-  const [hasSidebar, setHasSidebar] = useState(true);
+  const [hasSidebar, setHasSidebar] = useState(false);
   const [isVisibleSidebar, setVisibleSidebar] = useState(false);
   const [hasProductSidebar, setHasProductSidebar] = useState(false);
   const [isVisibleProductSidebar, setVisibleProductSidebar] = useState(false);

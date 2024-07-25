@@ -79,20 +79,23 @@ const Mapbox = ({
       setHasProductSidebar(false);
       setVisibleSidebar(true);
       setHasSidebar(true);
-    } else { // 2 for showing product sidebar
+    } else if (type === 2) { // 2 for showing product sidebar
       setVisibleSidebar(false);
       setHasSidebar(false);
       setVisibleProductSidebar(true);
       setHasProductSidebar(true);
+    } else {
+      setVisibleSidebar(false);
+      setHasSidebar(false);
+      setVisibleProductSidebar(false);
+      setHasProductSidebar(false);
     }
-
   }
 
   const createProductOverlays = (feature) => {
     const compData = queryData.find((company) => {
       return company.id === feature.properties.id
     });
-
     if (compData) {
       console.log("selected company data: ", compData);
       setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
@@ -307,7 +310,7 @@ const Mapbox = ({
           type: "geojson",
           data: geojsonCompanies,
           cluster: true,
-          clusterMaxZoom: 15,
+          clusterMaxZoom: 14,
           clusterRadius: 50,
         });
 
@@ -470,9 +473,8 @@ const Mapbox = ({
       const feature = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
       })[0];
-      console.log(feature)
       activeFeature = feature;
-      createProductOverlays(feature)
+      createProductOverlays(activeFeature)
     });
 
     // click to highlight project layer & show cooperated company
@@ -486,7 +488,7 @@ const Mapbox = ({
         map.current.setPaintProperty(`project-overlays-${i}`, 'circle-stroke-color', '#FFCE00') // highlight selected overlay
 
         const project_source = map.current.getSource(`project-${i}`);
-        console.log(project_source)
+        // console.log(project_source)
         const compData = queryData.find((data) => {
           return data.id === project_source._data.properties.compId
         })
@@ -521,7 +523,6 @@ const Mapbox = ({
             const point_features = [];
             coop_company.forEach((data) => {
               const company_location = turf.point([data.attributes.Location.Coor_long, data.attributes.Location.Coor_lat])
-              console.log(company_location)
               // if the company is shown off screen
               if (!turf.booleanPointInPolygon(company_location, screenBorder)) {
                 const lineToCompany = turf.lineString([
@@ -662,10 +663,13 @@ const Mapbox = ({
       });
     }
 
+    // move to the cooperated company on click
     map.current.on('click', 'Cooperate-circle', (e) => {
       const feature = map.current.queryRenderedFeatures(e.point, {
         layers: ['Cooperate-circle']
-      })[0]
+      })[0];
+      // console.log('feature: ' ,feature)
+      clearOverlays();
       map.current.easeTo({
         center: [
           feature.properties.company_lng,
@@ -673,6 +677,20 @@ const Mapbox = ({
         ],
         zoom: 16
       });
+      map.current.once('moveend', () => {
+        const company_feature = map.current.queryRenderedFeatures(map.current.project([
+          feature.properties.company_lng,
+          feature.properties.company_lat,
+        ]), {
+          layers: ['unclustered-point']
+        })[0];
+        if (company_feature) {
+          showSidebar(0);
+          activeFeature = company_feature;
+          createProductOverlays(company_feature);
+        }
+      });
+      // map.current.off('moveend', coopMoveend);
     })
 
     // always reset overlays position
@@ -803,7 +821,7 @@ const Mapbox = ({
       }
     });
 
-    // remove project overlays if company node becomes invisible (not visible on screen)
+    // remove project overlays if company node becomes invisible (not visible on screen) [TO BE MODIFIED]
     map.current.on('zoom', () => {
       if (activeFeature) {
         const features = map.current.queryRenderedFeatures(
