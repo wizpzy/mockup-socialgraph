@@ -73,15 +73,153 @@ const Mapbox = ({
     };
   };
 
-  const clearLines = () => {
+  const showSidebar = (type) => {
+    if (type === 1) { // 1 for showing company sidebar
+      setVisibleProductSidebar(false);
+      setHasProductSidebar(false);
+      setVisibleSidebar(true);
+      setHasSidebar(true);
+    } else { // 2 for showing product sidebar
+      setVisibleSidebar(false);
+      setHasSidebar(false);
+      setVisibleProductSidebar(true);
+      setHasProductSidebar(true);
+    }
+
+  }
+
+  const createProductOverlays = (feature) => {
+    const compData = queryData.find((company) => {
+      return company.id === feature.properties.id
+    });
+
+    if (compData) {
+      console.log("selected company data: ", compData);
+      setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
+      showSidebar(1);
+      const base_offset = 0.0003;
+      const scale = Math.pow(2, 18 - map.current.getZoom());
+      const overlays_ = [
+        {
+          geometry: {
+            type: 'Point',
+            coordinates: [
+              feature.geometry.coordinates[0] - (base_offset * scale),
+              feature.geometry.coordinates[1]
+            ]
+          },
+          properties: {
+            parent_node: feature,
+            position: 'Left'
+          }
+        },
+        {
+          geometry: {
+            type: 'Point',
+            coordinates: [
+              feature.geometry.coordinates[0] + (base_offset * scale),
+              feature.geometry.coordinates[1]
+            ]
+          },
+          properties: {
+            parent_node: feature,
+            position: 'Right'
+          }
+        },
+        {
+          geometry: {
+            type: 'Point',
+            coordinates: [
+              feature.geometry.coordinates[0],
+              feature.geometry.coordinates[1] + (base_offset * scale)
+            ]
+          },
+          properties: {
+            parent_node: feature,
+            position: 'Above'
+          }
+        }
+      ];
+      const project_amount = compData.attributes.Projects.data.length
+      const overlays = overlays_.slice(0, project_amount) // handling for different amount of projects
+      clearOverlays();
+
+      // create company logo layer
+      if (!map.current.getSource('selected-company')) {
+        map.current.addSource('selected-company', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: feature._geometry,
+          }
+        })
+        if (!map.current.getLayer('company-logo-overlay')) {
+          map.current.addLayer({
+            id: 'company-logo-overlay',
+            type: 'circle',
+            source: 'selected-company',
+            paint: {
+              'circle-color': 'rgba(255,255,255,1)',
+              'circle-radius': 60,
+              "circle-stroke-width": 4,
+              "circle-stroke-color": "#FF7E00",
+            }
+          })
+          createImageLayer('company-logo-image', 'company-logo-image-layer', 0.5, 'selected-company', feature.properties.imageUrl, 240)
+        }
+      }
+
+      // create each project layer (source + circle + image)
+      overlays.forEach(async (overlay, index) => {
+        // if project data is loaded
+        if (compData.attributes.Projects.data[index]) {
+          // project source
+          if (!map.current.getSource(`project-${index}`)) {
+            map.current.addSource(`project-${index}`, {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: overlay.geometry,
+                properties: {
+                  position: overlay.properties.position,
+                  parent_node: feature,
+                  id: compData.attributes.Projects.data[index].id,
+                  compId: compData.id
+                }
+              }
+            });
+          }
+          // project circle layer
+          if (!map.current.getLayer(`project-overlays-${index}`)) {
+            map.current.addLayer({
+              id: `project-overlays-${index}`,
+              type: 'circle',
+              source: `project-${index}`,
+              paint: {
+                'circle-color': 'rgba(255,255,255,1)',
+                'circle-radius': 24,
+                "circle-stroke-width": 4,
+                "circle-stroke-color": "#FF7E00",
+              }
+            });
+          }
+          const imagePath = compData.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url;
+          createImageLayer(`project-image-${index}`, `project-image-layer-${index}`, 0.5, `project-${index}`, imagePath, 100);
+        }
+      });
+    }
+  };
+
+  const clearOverlays = () => {
     if (map.current.getLayer('Cooperate-line-layer'))
       map.current.removeLayer('Cooperate-line-layer');
     if (map.current.getSource('Cooperate-line'))
       map.current.removeSource('Cooperate-line');
-  };
+    if (map.current.getLayer('Cooperate-circle'))
+      map.current.removeLayer('Cooperate-circle');
+    if (map.current.getSource('Cooperate-point'))
+      map.current.removeSource('Cooperate-point');
 
-  const clearOverlays = () => {
-    clearLines();
     for (let i = 0; i < 3; i++) {
       if (map.current.hasImage(`project-image-${i}`))
         map.current.removeImage(`project-image-${i}`)
@@ -92,6 +230,10 @@ const Mapbox = ({
       if (map.current.getSource(`project-${i}`))
         map.current.removeSource(`project-${i}`);
     }
+    if (map.current.getLayer('offscreen-circle')) {
+      map.current.removeLayer('offscreen-circle')
+      map.current.removeSource('offscreen-point')
+    }
     if (map.current.hasImage('company-logo-image'))
       map.current.removeImage('company-logo-image')
     if (map.current.getLayer('company-logo-image-layer'))
@@ -100,9 +242,43 @@ const Mapbox = ({
       map.current.removeLayer('company-logo-overlay')
     if (map.current.getSource('selected-company'))
       map.current.removeSource('selected-company')
+  };
+
+  const createImageLayer = async (imgId, layerId, iconSize, sourceId, imgUrl, imgSize = 60) => {
+    let circularImageData
+    if (imgUrl) {
+      circularImageData = await createCircularImage('http://localhost:1337' + imgUrl, imgSize);
+    } else {
+      circularImageData = await createCircularImage(tempPic, imgSize);
+    }
+    map.current.loadImage(circularImageData, (err, image) => {
+      if (err) throw err;
+      if (!map.current.hasImage(imgId))
+        map.current.addImage(imgId, image);
+    });
+    // company image layer
+    if (!map.current.getLayer(layerId)) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
+      map.current.addLayer({
+        id: layerId,
+        type: 'symbol',
+        source: sourceId,
+        layout: {
+          'icon-image': imgId,
+          'icon-size': iconSize,
+        }
+      });
+    }
+  }
+
+  const pixelToMeter = (pixel) => {
+    const zoomLevel = map.current.getZoom();
+    let mpp;
+    mpp = 156543.03 * Math.cos(map.current.getCenter().lat) / Math.pow(2, zoomLevel); // source: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Resolution_and_Scale
+    return (pixel * mpp)
   }
 
   useEffect(() => {
+    // init map
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainerRef.current,
@@ -273,7 +449,7 @@ const Mapbox = ({
       map.current.on("load", addDataToMap); //load data to map
     }
 
-    //click clusters to zoom in
+    // click clusters to zoom in
     map.current.on('click', "companies-clusters", (event) => {
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ["companies-clusters"],
@@ -289,213 +465,121 @@ const Mapbox = ({
         });
     });
 
-    //click to show company information in the sidebar & show project overlays
+    // click to show company information in the sidebar & show project overlays
     map.current.on('click', "unclustered-point", async (event) => {
-      const features = map.current.queryRenderedFeatures(event.point, {
+      const feature = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
-      });
-      const feature = features[0];
+      })[0];
       console.log(feature)
       activeFeature = feature;
-      // retrieve selected company data
-      const selected_company_data = queryData.find((data) => {
-        return data.id === feature.properties.id
-      });
-      if (selected_company_data) {
-        console.log("selected company data: ", selected_company_data);
-        setSelectedCompany(feature.properties ? feature.properties.id : 0); // set selected company to show in the sidebar
-        setVisibleProductSidebar(false);
-        setHasProductSidebar(false);
-        setVisibleSidebar(true);
-        setHasSidebar(true);
+      createProductOverlays(feature)
+    });
 
-        const base_offset = 0.0003;
-        const scale = Math.pow(2, 18 - map.current.getZoom());
-        const overlays_ = [
-          {
-            geometry: {
-              type: 'Point',
-              coordinates: [
-                feature.geometry.coordinates[0] - (base_offset * scale),
-                feature.geometry.coordinates[1]
-              ]
-            },
-            properties: {
-              parent_node: feature,
-              position: 'Left'
-            }
-          },
-          {
-            geometry: {
-              type: 'Point',
-              coordinates: [
-                feature.geometry.coordinates[0] + (base_offset * scale),
-                feature.geometry.coordinates[1]
-              ]
-            },
-            properties: {
-              parent_node: feature,
-              position: 'Right'
-            }
-          },
-          {
-            geometry: {
-              type: 'Point',
-              coordinates: [
-                feature.geometry.coordinates[0],
-                feature.geometry.coordinates[1] + (base_offset * scale)
-              ]
-            },
-            properties: {
-              parent_node: feature,
-              position: 'Above'
-            }
-          }
-        ]
-
-        const project_amount = selected_company_data.attributes.Projects.data.length
-        const overlays = overlays_.slice(0, project_amount) // handling for different amount of projects
-        clearOverlays();
-
-        if (!map.current.getSource('selected-company')) {
-          map.current.addSource('selected-company', {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              geometry: feature._geometry,
-            }
-          })
-          if (!map.current.getLayer('company-logo-overlay')) {
-            map.current.addLayer({
-              id: 'company-logo-overlay',
-              type: 'circle',
-              source: 'selected-company',
-              paint: {
-                'circle-color': 'rgba(255,255,255,1)',
-                'circle-radius': 60,
-                "circle-stroke-width": 4,
-                "circle-stroke-color": "#FF7E00",
-              }
-            })
-            let circularImageData
-            if (feature.properties.imageUrl) {
-              circularImageData = await createCircularImage('http://localhost:1337' + feature.properties.imageUrl);
-            } else {
-              circularImageData = await createCircularImage(tempPic);
-            }
-            map.current.loadImage(circularImageData, (err, image) => {
-              if (err) throw err;
-              if (!map.current.hasImage('company-logo-image'))
-                map.current.addImage('company-logo-image', image);
-            });
-            // company image layer
-            if (!map.current.getLayer('company-logo-image-layer')) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
-              map.current.addLayer({
-                id: 'company-logo-image-layer',
-                type: 'symbol',
-                source: 'selected-company',
-                layout: {
-                  'icon-image': 'company-logo-image',
-                  'icon-size': 2,
-                }
-              });
-            }
-          }
+    // click to highlight project layer & show cooperated company
+    for (let i = 0; i < 3; i++) {
+      map.current.on('click', `project-overlays-${i}`, () => {
+        // reset stroke color for all overlays
+        for (let j = 0; j < 3; j++) {
+          if (map.current.getLayer(`project-overlays-${j}`))
+            map.current.setPaintProperty(`project-overlays-${j}`, 'circle-stroke-color', '#FF7E00')
         }
-        
-        // create each project layer
-        overlays.forEach(async (overlay, index) => {
-          // if project data is loaded
-          if (selected_company_data.attributes.Projects.data[index]) {
-            // project source
-            if (!map.current.getSource(`project-${index}`)) {
-              map.current.addSource(`project-${index}`, {
-              type: 'geojson',
-              data: {
-                type: 'Feature',
-                geometry: overlay.geometry,
-                properties: {
-                  position: overlay.properties.position,
-                  parent_node: feature,
-                  id: selected_company_data.attributes.Projects.data[index].id
-                }
-              }
-            });
-            }
-            
-            // project circle layer
-            if (!map.current.getLayer(`project-overlays-${index}`)) {
-              map.current.addLayer({
-              id: `project-overlays-${index}`,
-              type: 'circle',
-              source: `project-${index}`,
-              paint: {
-                'circle-color': 'rgba(255,255,255,1)',
-                'circle-radius': 24,
-                "circle-stroke-width": 4,
-                "circle-stroke-color": "#FF7E00",
-              }
-            });
-          }
-            
-            // preparing project image layer
-            let circularImageData
-            // if project image is loaded
-            if (selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data) {
-              const imagePath = selected_company_data.attributes.Projects.data[index].attributes.Project.data.attributes.Image.data.attributes.formats.thumbnail.url;
-              circularImageData = await createCircularImage('http://localhost:1337' + imagePath);
-            } else {
-              circularImageData = await createCircularImage(tempPic);
-            }
-            map.current.loadImage(circularImageData, (err, image) => {
-              if (err) throw err;
-              if (!map.current.hasImage(`project-image-${index}`))
-                map.current.addImage(`project-image-${index}`, image);
-            });
-            // project image layer
-            if (!map.current.getLayer(`project-image-layer-${index}`)) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
-              map.current.addLayer({
-                id: `project-image-layer-${index}`,
-                type: 'symbol',
-                source: `project-${index}`,
-                layout: {
-                  'icon-image': `project-image-${index}`,
-                  'icon-size': 0.82,
-                }
-              });
-            }
-          }
-        });
-        // click to highlight project layer
-        for (let i = 0; i < project_amount; i++) {
-          map.current.on('click', `project-overlays-${i}`, () => {
-            for (let j = 0; j < 3; j++) {
-              if (map.current.getLayer(`project-overlays-${j}`))
-                map.current.setPaintProperty(`project-overlays-${j}`, 'circle-stroke-color', '#FF7E00')
-            }
-            map.current.setPaintProperty(`project-overlays-${i}`, 'circle-stroke-color', '#FFCE00')
-            const project_source = map.current.getSource(`project-${i}`);
-            console.log('project_source: ', project_source)
-            console.log('selected company: ', selected_company_data.attributes.Projects.data)
-            const project = selected_company_data.attributes.Projects.data.find((data) => {
-              return data.id === project_source._data.properties.id
-            });
-            console.log("project : ", project);
+        map.current.setPaintProperty(`project-overlays-${i}`, 'circle-stroke-color', '#FFCE00') // highlight selected overlay
 
-            // wait until project is loaded
-            if (project) {
-              const project_data = project.attributes.Project.data
-              console.log("project data: ", project_data);
-              const cooperation = project_data.attributes.Companies.data
-              let coop_company = []
-              cooperation.forEach((data) => {
-                coop_company.push(data.attributes.Company.data)
-              })
-              console.log("co-op company: ", coop_company)
+        const project_source = map.current.getSource(`project-${i}`);
+        console.log(project_source)
+        const compData = queryData.find((data) => {
+          return data.id === project_source._data.properties.compId
+        })
+        if (compData) {
+          const parent_location = turf.point([compData.attributes.Location.Coor_long, compData.attributes.Location.Coor_lat])
+          const project = compData.attributes.Projects.data.find((data) => {
+            return data.id === project_source._data.properties.id
+          });
+          const bounds = map.current.getBounds();
+          const screenBorder = turf.polygon([
+            [
+              [bounds._ne.lng, bounds._ne.lat],
+              [bounds._sw.lng, bounds._ne.lat],
+              [bounds._sw.lng, bounds._sw.lat],
+              [bounds._ne.lng, bounds._sw.lat],
+              [bounds._ne.lng, bounds._ne.lat]
+            ]
+          ])
+          const borderLine = turf.polygonToLine(screenBorder)
 
-              const features = [];
-              coop_company.forEach((data) => {
-                features.push({
+          // wait until project is loaded then draw line to cooperated company
+          if (project) {
+            const project_data = project.attributes.Project.data
+            const cooperation = project_data.attributes.Companies.data
+            let coop_company = []
+            cooperation.forEach((data) => {
+              coop_company.push(queryData.find((data2) => {
+                return data.attributes.Company.data.id === data2.id
+              }))
+            })
+            const line_features = [];
+            const point_features = [];
+            coop_company.forEach((data) => {
+              const company_location = turf.point([data.attributes.Location.Coor_long, data.attributes.Location.Coor_lat])
+              console.log(company_location)
+              // if the company is shown off screen
+              if (!turf.booleanPointInPolygon(company_location, screenBorder)) {
+                const lineToCompany = turf.lineString([
+                  [map.current.getCenter().lng, map.current.getCenter().lat],
+                  company_location.geometry.coordinates
+                ])
+                const offScreenIntersection = turf.lineIntersect(borderLine, lineToCompany).features[0];
+                const direction = turf.bearing(offScreenIntersection, turf.point(project_source._data.geometry.coordinates))
+                const offScreenPoint = turf.destination(offScreenIntersection, pixelToMeter(75) / 1000, direction)
+                offScreenPoint.properties = {
+                  company_lng: company_location.geometry.coordinates[0],
+                  company_lat: company_location.geometry.coordinates[1],
+                  company_logo: data.attributes.Image.data ? data.attributes.Image.data.attributes.formats.thumbnail.url : null,
+                  offscreen: true
+                }
+                point_features.push({
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: offScreenPoint.geometry.coordinates
+                  },
+                  properties: offScreenPoint.properties
+                })
+
+                line_features.push({
+                  type: 'Feature',
+                  geometry: {
+                    coordinates: [
+                      project_source._data.geometry.coordinates,
+                      offScreenPoint.geometry.coordinates
+                    ],
+                    type: 'LineString'
+                  },
+                  properties: {
+                    offscreen: true,
+                    company: data,
+                    project: project_data,
+                    overlay_id: project_source.id
+                  }
+                })
+              } else {
+                point_features.push({
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: [
+                      data.attributes.Location.Coor_long,
+                      data.attributes.Location.Coor_lat
+                    ]
+                  },
+                  properties: {
+                    company_lng: company_location.geometry.coordinates[0],
+                    company_lat: company_location.geometry.coordinates[1],
+                    company_logo: data.attributes.Image.data ? data.attributes.Image.data.attributes.formats.thumbnail.url : null,
+                    offscreen: false
+                  }
+                })
+                line_features.push({
                   type: 'Feature',
                   geometry: {
                     coordinates: [
@@ -506,58 +590,92 @@ const Mapbox = ({
                       ]
                     ],
                     type: 'LineString'
+                  },
+                  properties: {
+                    offscreen: false,
+                    company: data,
+                    project: project_data,
+                    overlay_id: project_source.id
                   }
                 })
-              })
-              if (map.current.getLayer('Cooperate-line-layer'))
-                map.current.removeLayer('Cooperate-line-layer');
-              if (map.current.getSource('Cooperate-line'))
-                map.current.removeSource('Cooperate-line');
-
-              if (!map.current.getSource('Cooperate-line')) {
-                map.current.addSource('Cooperate-line', {
-                  type: 'geojson',
-                  data: {
-                    type: "FeatureCollection",
-                    features: features,
-                    properties: {
-                      overlay_id: project_source.id,
-                    }
-                  }
-                })
-
-                if (!map.current.getLayer('Cooperate-line-layer')) {
-                  map.current.addLayer({
-                    id: 'Cooperate-line-layer',
-                    type: 'line',
-                    source: 'Cooperate-line',
-                    paint: {
-                      'line-color': '#F00',
-                      'line-blur': 1,
-                      'line-width': 3
-                    }
-                  })
-                  // map.current.moveLayer("Cooperate-line-layer", "companies-clusters");
-                  map.current.moveLayer("Cooperate-line-layer", "unclustered-point");
-                  map.current.moveLayer("Cooperate-line-layer", `project-overlays-${i}`);
-                }
               }
 
-              console.log(map.current.getSource('Cooperate-line'))
+            })
 
-              setSelectedProduct(project_data ? project_data.id : 0);
-              setVisibleSidebar(false);
-              setHasSidebar(false);
-              setVisibleProductSidebar(true);
-              setHasProductSidebar(true);
+            if (map.current.getLayer('Cooperate-circle')) {
+              map.current.removeLayer('Cooperate-circle')
+              map.current.removeSource('Cooperate-point')
             }
-          });
-        }
-      }
-    });
+            map.current.addSource('Cooperate-point', {
+              type: 'geojson',
+              data: {
+                type: 'FeatureCollection',
+                features: point_features
+              }
+            });
+            map.current.addLayer({
+              id: 'Cooperate-circle',
+              type: 'circle',
+              source: 'Cooperate-point',
+              paint: {
+                'circle-color': 'rgba(255,255,255,1)',
+                'circle-radius': 24,
+                "circle-stroke-width": 4,
+                "circle-stroke-color": "#FF7E00",
+              },
+              filter: ['==', ['get', 'offscreen'], true]
+            });
 
-    // reset overlays position
-    map.current.on('moveend', () => {
+            if (map.current.getLayer('Cooperate-line-layer')) {
+              map.current.removeLayer('Cooperate-line-layer');
+              map.current.removeSource('Cooperate-line');
+            }
+            map.current.addSource('Cooperate-line', {
+              type: 'geojson',
+              data: {
+                type: "FeatureCollection",
+                features: line_features,
+                properties: {
+                  overlay_id: project_source.id,
+                }
+              }
+            });
+            map.current.addLayer({
+              id: 'Cooperate-line-layer',
+              type: 'line',
+              source: 'Cooperate-line',
+              paint: {
+                'line-color': '#F00',
+                'line-blur': 1,
+                'line-width': 3
+              },
+              layout: {
+                'line-join': 'round'
+              },
+              filter: ['==', ['get', 'offscreen'], false]
+            });
+            map.current.moveLayer("Cooperate-line-layer", "unclustered-point");
+            setSelectedProduct(project_data ? project_data.id : 0);
+            showSidebar(2)
+          }
+        }
+      });
+    }
+
+    map.current.on('click', 'Cooperate-circle', (e) => {
+      const feature = map.current.queryRenderedFeatures(e.point, {
+        layers: ['Cooperate-circle']
+      })[0]
+      map.current.easeTo({
+        center: [
+          feature.properties.company_lng,
+          feature.properties.company_lat,
+        ],
+      });
+    })
+
+    // always reset overlays position
+    map.current.on('move', () => {
       const base_offset = 0.0003;
       const scale = Math.pow(2, 18 - map.current.getZoom());
       if (map.current.getSource('project-0')) {
@@ -610,46 +728,81 @@ const Mapbox = ({
           ]
           overlays.forEach((overlay, index) => {
             if (map.current.getSource(`project-${index}`)) {
+              const project_source = map.current.getSource(`project-${index}`);
               map.current.getSource(`project-${index}`).setData({
                 type: 'Feature',
                 geometry: overlay.geometry,
                 properties: {
                   position: overlay.properties.position,
                   parent_node: overlay.properties.parent_node,
-                  id: selected_company_data.attributes.Projects.data[index].id
+                  id: selected_company_data.attributes.Projects.data[index].id,
+                  compId: project_source._data.properties.compId
                 }
               });
             }
           });
-          if (map.current.getSource('Cooperate-line')) {
-            const line_source = map.current.getSource('Cooperate-line')
-            const features = line_source._data.features
-            console.log(map.current.getSource(line_source._data.properties.overlay_id))
+
+          const bounds = map.current.getBounds()
+          const screenBorder = turf.polygon([
+            [
+              [bounds._ne.lng, bounds._ne.lat],
+              [bounds._sw.lng, bounds._ne.lat],
+              [bounds._sw.lng, bounds._sw.lat],
+              [bounds._ne.lng, bounds._sw.lat],
+              [bounds._ne.lng, bounds._ne.lat]
+            ]
+          ])
+          const borderLine = turf.polygonToLine(screenBorder)
+          const point_source = map.current.getSource('Cooperate-point');
+          const line_source = map.current.getSource('Cooperate-line');
+          if (point_source && line_source) {
+            const point_features = point_source._data.features
+            const line_features = line_source._data.features
             const project_source = map.current.getSource(line_source._data.properties.overlay_id)
-            console.log(line_source)
-            console.log(features)
-            features.forEach((data) => {
-              data.geometry.coordinates = [
-                project_source._data.geometry.coordinates,
-                data.geometry.coordinates[1]
-              ]
-            })
-            map.current.getSource('Cooperate-line').setData({
+            point_features.forEach((feature, i) => {
+              const company_location = turf.point([feature.properties.company_lng, feature.properties.company_lat]);
+              if (turf.booleanPointInPolygon(company_location, screenBorder)) {
+                feature.geometry = company_location.geometry;
+                feature.properties.offscreen = false;
+                line_features[i].geometry.coordinates = [
+                  project_source._data.geometry.coordinates,
+                  company_location.geometry.coordinates
+                ];
+                line_features[i].properties.offscreen = false;
+              } else {
+                const lineToCompany = turf.lineString([
+                  [map.current.getCenter().lng, map.current.getCenter().lat],
+                  company_location.geometry.coordinates
+                ])
+                const offScreenIntersection = turf.lineIntersect(borderLine, lineToCompany).features[0];
+                const direction = turf.bearing(offScreenIntersection, turf.point([map.current.getCenter().lng, map.current.getCenter().lat]));
+                const offScreenPoint = turf.destination(offScreenIntersection, pixelToMeter(50) / 1000, direction);
+                feature.geometry = offScreenPoint.geometry;
+                feature.properties.offscreen = true;
+                line_features[i].geometry.coordinates = [
+                  [map.current.getCenter().lng, map.current.getCenter().lat],
+                  offScreenPoint.geometry.coordinates
+                ];
+                line_features[i].properties.offscreen = true
+              }
+            });
+            point_source.setData({
               type: "FeatureCollection",
-              features: features,
+              features: point_features
+            });
+            line_source.setData({
+              type: "FeatureCollection",
+              features: line_features,
               properties: {
                 overlay_id: line_source._data.properties.overlay_id,
               }
-            })
-            console.log(map.current.getSource('Cooperate-line'))
+            });
           }
-
-
         }
       }
     });
 
-    // remove project overlays if company node becomes cluster
+    // remove project overlays if company node becomes invisible (not visible on screen)
     map.current.on('zoom', () => {
       if (activeFeature) {
         const features = map.current.queryRenderedFeatures(
@@ -664,6 +817,7 @@ const Mapbox = ({
 
     // hover company node to show info popup
     map.current.on('mouseenter', 'unclustered-point', (event) => {
+      map.current.getCanvas().style.cursor = "pointer";
       const features = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
       });
@@ -694,19 +848,33 @@ const Mapbox = ({
         .addTo(map.current);
       popupRef.current = popup;
     });
-
     map.current.on("mouseleave", "unclustered-point", () => {
+      map.current.getCanvas().style.cursor = "";
       if (popupRef.current) {
         popupRef.current.remove();
       }
     });
-
     map.current.on("mouseenter", "companies-clusters", () => {
       map.current.getCanvas().style.cursor = "pointer";
     });
     map.current.on("mouseleave", "companies-clusters", () => {
       map.current.getCanvas().style.cursor = "";
     });
+    for (let i = 0; i < 3; i++) {
+      map.current.on("mouseenter", `project-overlays-${i}`, () => {
+        map.current.getCanvas().style.cursor = "pointer";
+      });
+      map.current.on("mouseleave", `project-overlays-${i}`, () => {
+        map.current.getCanvas().style.cursor = "";
+      });
+    }
+    map.current.on("mouseenter", "Cooperate-circle", () => {
+      map.current.getCanvas().style.cursor = "pointer";
+    });
+    map.current.on("mouseleave", "Cooperate-circle", () => {
+      map.current.getCanvas().style.cursor = "";
+    });
+
   }, [queryData, selectedIndustry]);
 
   // highlight and pan to the selected province on selected
