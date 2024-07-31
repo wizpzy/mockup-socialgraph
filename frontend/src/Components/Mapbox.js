@@ -94,7 +94,6 @@ const Mapbox = ({
   }
 
   const createProductOverlays = (feature) => {
-    console.log('query data: ', queryData)
     const compData = queryData.find((company) => {
       return company.id === feature.properties.id
     });
@@ -486,7 +485,7 @@ const Mapbox = ({
       }
       // clear project layers
       clearOverlays();
-    };
+    }
 
     if (map.current.isStyleLoaded()) {
       console.log("Style loaded");
@@ -513,13 +512,11 @@ const Mapbox = ({
     });
 
     // click to show company information in the sidebar & show project overlays
-    map.current.on('click', "unclustered-point", async (event) => {
+    map.current.on('click', "unclustered-point", (event) => {
       const feature = map.current.queryRenderedFeatures(event.point, {
         layers: ["unclustered-point"],
       })[0];
       activeFeature = feature;
-      console.log(selectedIndustry)
-      console.log(selectedProvince)
       createProductOverlays(activeFeature)
     });
 
@@ -537,7 +534,6 @@ const Mapbox = ({
           return data.id === project_source._data.properties.compId
         })
         if (compData) {
-          // const parent_location = turf.point([compData.attributes.Location.Coor_long, compData.attributes.Location.Coor_lat])
           const project = compData.attributes.Projects.data.find((data) => {
             return data.id === project_source._data.properties.id
           });
@@ -687,11 +683,9 @@ const Mapbox = ({
               },
               filter: ['==', ['get', 'offscreen'], true]
             });
-            console.log(map.current.getSource('Cooperate-point'));
             const source = map.current.getSource('Cooperate-point');
             let imagesLoaded = 0;
-            for(const feature of source._data.features) { // for-of instead of forEach to prevent asynchronous problem ('logo added' was logged before Imagesloaded)
-            // source._data.features.forEach(async (feature) => {
+            for(const feature of source._data.features) { // for-of instead of forEach to prevent asynchronous problem ('logo added' was logged before images loaded)
               const imgUrl = feature.properties.logo_url;
               let circularImageData
               if (imgUrl) {
@@ -705,7 +699,7 @@ const Mapbox = ({
                   map.current.addImage(feature.properties.company + '-logo', image);
               });
               feature.properties.logo_id = feature.properties.company + '-logo'
-              console.log(++imagesLoaded)
+              imagesLoaded++;
             }
             // company image layer
             if (!map.current.getLayer('Cooperate-logo') && imagesLoaded === source._data.features.length) { // if layer is not existed then add layer, this condition only for preventing redundant adding layer
@@ -720,7 +714,7 @@ const Mapbox = ({
                 filter: ['==', ['get', 'offscreen'], true]
               });
             }
-            console.log('logo added: ', map.current.getLayer('Cooperate-logo'))
+            // console.log('logo added: ', map.current.getLayer('Cooperate-logo'))
             if (map.current.getLayer('Cooperate-arrow-icon')) {
               map.current.removeLayer('Cooperate-arrow-icon')
               map.current.removeSource('Cooperate-arrow')
@@ -779,6 +773,32 @@ const Mapbox = ({
             map.current.moveLayer("Cooperate-circle", "Cooperate-logo");
             setSelectedProduct(project_data ? project_data.id : 0);
             showSidebar(2)
+            map.current.on('click', "Cooperate-circle", (event) => {
+              const feature = map.current.queryRenderedFeatures(event.point, {
+                layers: ['Cooperate-circle']
+              })[0];
+              clearOverlays();
+              showSidebar(0);
+              map.current.easeTo({
+                center: [
+                  feature.properties.company_lng,
+                  feature.properties.company_lat,
+                ],
+                zoom: 16
+              });
+              map.current.once('moveend', () => {
+                const company_feature = map.current.queryRenderedFeatures(map.current.project([
+                  feature.properties.company_lng,
+                  feature.properties.company_lat,
+                ]), {
+                  layers: ['unclustered-point']
+                })[0];
+                if (company_feature) {
+                  activeFeature = company_feature;
+                  createProductOverlays(company_feature);
+                }
+              });
+            })
           }
         }
         map.current.triggerRepaint();
@@ -786,36 +806,34 @@ const Mapbox = ({
     }
 
     // move to the cooperated company on click
-    map.current.on('click', 'Cooperate-circle', async (e) => {
-      const feature = map.current.queryRenderedFeatures(e.point, {
-        layers: ['Cooperate-circle']
-      })[0];
-      // console.log('feature: ' ,feature)
-      clearOverlays();
-      showSidebar(0);
-      map.current.easeTo({
-        center: [
-          feature.properties.company_lng,
-          feature.properties.company_lat,
-        ],
-        zoom: 16
-      });
-      console.log(selectedIndustry)
-      console.log(selectedProvince)
-      map.current.once('moveend', () => {
-        const company_feature = map.current.queryRenderedFeatures(map.current.project([
-          feature.properties.company_lng,
-          feature.properties.company_lat,
-        ]), {
-          layers: ['unclustered-point']
-        })[0];
-        console.log(company_feature)
-        if (company_feature) {
-          activeFeature = company_feature;
-          createProductOverlays(company_feature);
-        }
-      });
-    })
+    // map.current.on('click', "Cooperate-circle", (event) => {
+    //   console.log(selectedIndustry)
+    //   console.log(selectedProvince)
+    //   const feature = map.current.queryRenderedFeatures(event.point, {
+    //     layers: ['Cooperate-circle']
+    //   })[0];
+    //   clearOverlays();
+    //   showSidebar(0);
+    //   map.current.easeTo({
+    //     center: [
+    //       feature.properties.company_lng,
+    //       feature.properties.company_lat,
+    //     ],
+    //     zoom: 16
+    //   });
+    //   map.current.once('moveend', () => {
+    //     const company_feature = map.current.queryRenderedFeatures(map.current.project([
+    //       feature.properties.company_lng,
+    //       feature.properties.company_lat,
+    //     ]), {
+    //       layers: ['unclustered-point']
+    //     })[0];
+    //     if (company_feature) {
+    //       activeFeature = company_feature;
+    //       createProductOverlays(company_feature);
+    //     }
+    //   });
+    // })
 
     // always reset overlays position
     map.current.on('move', () => {
@@ -962,7 +980,7 @@ const Mapbox = ({
       }
     });
 
-    // remove project overlays if company node becomes invisible (not visible on screen) [TO BE MODIFIED]
+    // remove project overlays if company node becomes invisible (not visible on screen)
     map.current.on('zoom', () => {
       if (activeFeature) {
         const features = map.current.queryRenderedFeatures(
