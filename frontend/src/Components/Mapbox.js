@@ -570,7 +570,6 @@ const Mapbox = ({
                   },
                   properties: offScreenArrow.properties
                 });
-
                 line_features.push({
                   type: 'Feature',
                   geometry: {
@@ -588,6 +587,60 @@ const Mapbox = ({
                   }
                 });
               } else {
+                const clusters = map.current.queryRenderedFeatures({ layers: ['companies-clusters'] })
+                const compNode = map.current.queryRenderedFeatures(map.current.project([
+                  data.attributes.Location.Coor_long,
+                  data.attributes.Location.Coor_lat
+                ]), { layers: ['unclustered-point'] })[0]
+                if (!compNode) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
+                  const compLngLat = new mapboxgl.LngLat(data.attributes.Location.Coor_long, data.attributes.Location.Coor_lat);
+                  let minDist = Number.MAX_VALUE;
+                  let closestCluster;
+                  clusters.forEach((cluster) => {
+                    const clusterLngLat = new mapboxgl.LngLat(cluster.geometry.coordinates[0], cluster.geometry.coordinates[1]);
+                    const dist = compLngLat.distanceTo(clusterLngLat);
+                    if (dist < minDist) {
+                      minDist = dist;
+                      closestCluster = cluster;
+                    }
+                  })
+                  line_features.push({
+                    type: 'Feature',
+                    geometry: {
+                      coordinates: [
+                        project_source._data.geometry.coordinates,
+                        closestCluster._geometry.coordinates
+                      ],
+                      type: 'LineString'
+                    },
+                    properties: {
+                      offscreen: false,
+                      company: data,
+                      project: project_data,
+                      overlay_id: project_source.id
+                    }
+                  });
+                } else {
+                  line_features.push({
+                    type: 'Feature',
+                    geometry: {
+                      coordinates: [
+                        project_source._data.geometry.coordinates,
+                        [
+                          data.attributes.Location.Coor_long,
+                          data.attributes.Location.Coor_lat
+                        ]
+                      ],
+                      type: 'LineString'
+                    },
+                    properties: {
+                      offscreen: false,
+                      company: data,
+                      project: project_data,
+                      overlay_id: project_source.id
+                    }
+                  });
+                }
                 point_features.push({
                   type: 'Feature',
                   geometry: {
@@ -604,25 +657,6 @@ const Mapbox = ({
                     logo_url: data.attributes.Image.data ? data.attributes.Image.data.attributes.formats.thumbnail.url : null,
                     logo_id: null,
                     offscreen: false
-                  }
-                });
-                line_features.push({
-                  type: 'Feature',
-                  geometry: {
-                    coordinates: [
-                      project_source._data.geometry.coordinates,
-                      [
-                        data.attributes.Location.Coor_long,
-                        data.attributes.Location.Coor_lat
-                      ]
-                    ],
-                    type: 'LineString'
-                  },
-                  properties: {
-                    offscreen: false,
-                    company: data,
-                    project: project_data,
-                    overlay_id: project_source.id
                   }
                 });
               }
@@ -655,6 +689,7 @@ const Mapbox = ({
             });
             const source = map.current.getSource('Cooperate-point');
             let imagesLoaded = 0;
+            // load and add images
             for (const feature of source._data.features) { // for-of instead of forEach to prevent asynchronous problem (adding layer before images are loaded)
               const imgUrl = feature.properties.logo_url;
               let circularImageData
@@ -865,16 +900,8 @@ const Mapbox = ({
 
             point_features.forEach((feature, i) => {
               const company_location = turf.point([feature.properties.company_lng, feature.properties.company_lat]);
-              if (turf.booleanPointInPolygon(company_location, screenBorder)) {
-                feature.geometry = company_location.geometry;
-                feature.properties.offscreen = false;
-
-                line_features[i].geometry.coordinates = [
-                  project_source._data.geometry.coordinates,
-                  company_location.geometry.coordinates
-                ];
-                line_features[i].properties.offscreen = false;
-              } else {
+              // if the company is shown off screen
+              if (!turf.booleanPointInPolygon(company_location, screenBorder)) {
                 const lineToCompany = turf.lineString([
                   [map.current.getCenter().lng, map.current.getCenter().lat],
                   company_location.geometry.coordinates
@@ -900,6 +927,36 @@ const Mapbox = ({
                   offScreenPoint.geometry.coordinates
                 ];
                 line_features[i].properties.offscreen = true
+              } else {
+                const clusters = map.current.queryRenderedFeatures({ layers: ['companies-clusters'] })
+                const compNode = map.current.queryRenderedFeatures(map.current.project(feature.geometry.coordinates),
+                  { layers: ['unclustered-point'] })[0]
+                if (!compNode) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
+                  const compLngLat = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
+                  let minDist = Number.MAX_VALUE;
+                  let closestCluster;
+                  clusters.forEach((cluster) => {
+                    const clusterLngLat = new mapboxgl.LngLat(cluster.geometry.coordinates[0], cluster.geometry.coordinates[1]);
+                    const dist = compLngLat.distanceTo(clusterLngLat);
+                    if (dist < minDist) {
+                      minDist = dist;
+                      closestCluster = cluster;
+                    }
+                  })
+                  line_features[i].geometry.coordinates = [
+                    project_source._data.geometry.coordinates,
+                    closestCluster.geometry.coordinates
+                  ];
+                } else {
+                  line_features[i].geometry.coordinates = [
+                    project_source._data.geometry.coordinates,
+                    company_location.geometry.coordinates
+                  ];
+                }
+                feature.geometry = company_location.geometry;
+                feature.properties.offscreen = false;
+                line_features[i].properties.offscreen = false;
+
               }
             });
             point_source.setData({
@@ -927,7 +984,7 @@ const Mapbox = ({
       clearOverlays();
       showSidebar(0);
     })
-    // remove project overlays if company node becomes invisible (not visible on screen)
+    // remove project overlays if company node becomes invisible (not visible on screen) [CHANGED TO RIGHTCLICK HANDLER]
     // map.current.on('zoom', () => {
     //   if (activeFeature) {
     //     console.log(activeFeature)
