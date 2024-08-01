@@ -216,7 +216,7 @@ const Mapbox = ({
   };
 
   const clearOverlays = () => {
-    // activeFeature = null;
+    showSidebar(0);
     if (map.current.getLayer('Cooperate-line-layer'))
       map.current.removeLayer('Cooperate-line-layer');
     if (map.current.getSource('Cooperate-line'))
@@ -456,7 +456,7 @@ const Mapbox = ({
         })
       }
       // clear project layers
-      // clearOverlays();
+      clearOverlays();
     }
 
     if (map.current.isStyleLoaded()) {
@@ -804,13 +804,15 @@ const Mapbox = ({
             })
           }
         }
-        setSelectedIndustry('all')
+        setSelectedIndustry("all")
+        const geojsonCompanies = getGeojsonCompanies("all");
+        if (map.current.getSource("companies")) {
+          map.current.getSource("companies").setData(geojsonCompanies);
+        }
         // console.log(selectedIndustry)
       });
     }
     });
-
-    
 
     // always reset overlays position
     map.current.on('move', () => {
