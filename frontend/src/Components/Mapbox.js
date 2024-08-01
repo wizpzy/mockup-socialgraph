@@ -805,6 +805,7 @@ const Mapbox = ({
           }
         }
         setSelectedIndustry('all')
+        // console.log(selectedIndustry)
       });
     }
     });
