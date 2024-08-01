@@ -58,6 +58,7 @@ const App = () => {
       <Mapbox
         queryData={queryData}
         selectedIndustry={selectedIndustry.value}
+        setSelectedIndustry={setSelectedIndustry}
         selectedProvince={selectedProvince.value}
         setSelectedCompany={setSelectedCompany}
         setSelectedProduct={setSelectedProduct}

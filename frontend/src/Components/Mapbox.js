@@ -14,6 +14,7 @@ mapboxgl.accessToken =
 const Mapbox = ({
   queryData,
   selectedIndustry,
+  setSelectedIndustry,
   selectedProvince,
   setSelectedCompany,
   setSelectedProduct,
@@ -288,6 +289,7 @@ const Mapbox = ({
     return (pixel * mpp)
   }
 
+
   useEffect(() => {
     // init map
     if (!map.current) {
@@ -450,11 +452,11 @@ const Mapbox = ({
 
         map.current.loadImage(arrowIcon, (err, img) => {
           if (err) throw err;
-          map.current.addImage('arrow-icon', img, { 'sdf': true });
+          map.current.addImage('arrow-icon', img);
         })
       }
       // clear project layers
-      clearOverlays();
+      // clearOverlays();
     }
 
     if (map.current.isStyleLoaded()) {
@@ -488,9 +490,7 @@ const Mapbox = ({
       })[0];
       // activeFeature = feature;
       createProductOverlays(feature)
-    });
-
-    // click to highlight project layer & show cooperated company
+      // click to highlight project layer & show cooperated company
     for (let i = 0; i < 3; i++) {
       map.current.on('click', `project-overlays-${i}`, async () => {
         // reset stroke color for all overlays
@@ -735,9 +735,6 @@ const Mapbox = ({
               id: 'Cooperate-arrow-icon',
               type: 'symbol',
               source: 'Cooperate-arrow',
-              paint: {
-                'icon-color': '#FF7E00'
-              },
               layout: {
                 'icon-image': 'arrow-icon',
                 'icon-size': 0.085,
@@ -807,8 +804,12 @@ const Mapbox = ({
             })
           }
         }
+        setSelectedIndustry('all')
       });
     }
+    });
+
+    
 
     // always reset overlays position
     map.current.on('move', () => {
