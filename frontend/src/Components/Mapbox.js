@@ -592,7 +592,7 @@ const Mapbox = ({
                   data.attributes.Location.Coor_long,
                   data.attributes.Location.Coor_lat
                 ]), { layers: ['unclustered-point'] })[0]
-                if (!compNode) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
+                if (!compNode && clusters[0]) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
                   const compLngLat = new mapboxgl.LngLat(data.attributes.Location.Coor_long, data.attributes.Location.Coor_lat);
                   let minDist = Number.MAX_VALUE;
                   let closestCluster;
@@ -931,7 +931,7 @@ const Mapbox = ({
                 const clusters = map.current.queryRenderedFeatures({ layers: ['companies-clusters'] })
                 const compNode = map.current.queryRenderedFeatures(map.current.project(feature.geometry.coordinates),
                   { layers: ['unclustered-point'] })[0]
-                if (!compNode) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
+                if (!compNode && clusters[0]) { // if the company node is invisible (onscreen but clustered), then find the closest cluster to draw line to
                   const compLngLat = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
                   let minDist = Number.MAX_VALUE;
                   let closestCluster;
