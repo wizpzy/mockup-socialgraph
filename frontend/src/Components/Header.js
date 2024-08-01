@@ -141,6 +141,9 @@ const Header = ({
     }),
   };
 
+  const customFilterOption = (option, inputValue) => {
+    return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+  };
   return (
     <header className={`header ${showFilters ? "expanded" : ""}`}>
       <div className="header-content">
@@ -182,6 +185,7 @@ const Header = ({
           <Select
             classNamePrefix="react-select"
             options={industries}
+            filterOption={customFilterOption}
             value={selectedIndustry}
             onChange={setSelectedIndustry}
             placeholder="All Industries"
@@ -191,6 +195,7 @@ const Header = ({
           <Select
             classNamePrefix="react-select"
             options={provinces}
+            filterOption={customFilterOption}
             value={selectedProvince}
             onChange={setSelectedProvince}
             placeholder="All Provinces"

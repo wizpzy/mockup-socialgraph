@@ -3,7 +3,7 @@ import Axios from "axios";
 import Header from "./Components/Header";
 import Mapbox from "./Components/Mapbox";
 import Sidebar from "./Components/Sidebar";
-// import ProductSidebar from "./Components/Sidebar_product";
+import ProductSidebar from "./Components/Sidebar_product";
 import { qs_main } from "./utils/queryString";
 import "./App.css";
 
@@ -52,6 +52,15 @@ const App = () => {
         selectedProvince={selectedProvince}
         setSelectedProvince={setSelectedProvince}
       />
+      { hasSidebar &&
+      <Sidebar
+        children={queryData}
+        selectedCompany={selectedCompany}
+        isVisibleSidebar={isVisibleSidebar}
+        setVisibleSidebar={setVisibleSidebar}
+        hasSidebar={hasSidebar}
+        setHasSidebar={setHasSidebar}
+      />}
       {/* <Mapbox
         queryData={queryData}
         selectedIndustry={selectedIndustry.value}
@@ -63,16 +72,8 @@ const App = () => {
         setVisibleSidebar={setVisibleSidebar}
         setHasSidebar={setHasSidebar}
       /> */}
-      { hasSidebar &&
-      <Sidebar
-        children={queryData}
-        selectedCompany={selectedCompany}
-        isVisibleSidebar={isVisibleSidebar}
-        setVisibleSidebar={setVisibleSidebar}
-        hasSidebar={hasSidebar}
-        setHasSidebar={setHasSidebar}
-      />}
       {/* <ProductSidebar/> */}
+
     </div>
   );
 };

@@ -41,4 +41,5 @@
 body {
   font-family: "Kanit", sans-serif;
   height: 100%;
+  overflow: hidden;
 }

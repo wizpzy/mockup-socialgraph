@@ -1,51 +1,96 @@
 /* Sidebar.css */
 
 .sidebar {
-  position: fixed;
-  top: 56px;
+  position: absolute;
   left: 0;
-  height: 100%;
-  z-index: 1000;
+  height: calc(100% - 56px);
+  z-index: 1;
   display: grid;
   grid-template-columns: 423px 44px;
   cursor: auto;
 }
 
 .sidebar-content {
-  overflow-y:auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: white;
-  max-height: 100%;
+  height: 100%;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
-.sidebar-content::-webkit-scrollbar{
-  width:6px;
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
 }
 
 .sidebar-content::-webkit-scrollbar-track {
-  background: #CECECE;
+  background: #cecece;
 }
 
-.sidebar-content::-webkit-scrollbar-thumb{
-  background-color: #FA4616;
+.sidebar-content::-webkit-scrollbar-thumb {
+  background-color: #fa4616;
   border-radius: 20px;
 }
 
 .sidebar-header {
   display: flex;
   position: relative;
-  width: 423px;
+  width: 100%;
   height: 320px;
+  justify-content: start;
+}
+
+.edge {
+  display: none;
+  width: 50px;
+  height: 4px;
+  background-color: #cecece;
+  border-radius: 30px;
+  transition: background 0.2s ease;
+}
+
+.dragedge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  cursor: row-resize;
+}
+
+.dragedge:hover .edge {
+  background-color: #7d8288;
+}
+
+.btn {
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  position: absolute;
   justify-content: end;
 }
 
-.close-btn {
-  position: absolute;
+.expand-btn {
+  display: none;
   border: none;
-  background: rgba(255, 255, 255, 0.30);  ;
-  font-size: 32px;
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 30px;
+  color: #cecece;
   cursor: pointer;
-  color: #CECECE;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 30px;
+  cursor: pointer;
+  color: #cecece;
+  align-items: center;
+  justify-content: center;
+  padding: auto;
 }
 
 .close-btn:hover {
@@ -53,13 +98,13 @@
 }
 
 .company-pic {
-  width : 423px;
-  height : 251px;
-  background-color :#F6F4F4;
+  width: 423px;
+  height: 251px;
+  background-color: #f6f4f4;
   border-bottom: 1px solid #ccc;
 }
 
-.company-logo{
+.company-logo {
   display: flex;
   position: absolute;
   width: 137px;
@@ -67,7 +112,7 @@
   background-color: white;
   border-radius: 100%;
   align-self: end;
-  left:0;
+  left: 0;
   margin: 10px;
   padding: 10px;
   overflow: hidden;
@@ -76,78 +121,111 @@
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
-.cover-image{
-  width:100%;
+.cover-image {
+  width: 100%;
   height: 100%;
 }
 
-.logo-image{
-  width:137px;
+.logo-image {
+  width: 137px;
   height: 137px;
   object-fit: contain;
 }
 
 .sidebar-body {
-  width: 403px;
-  padding-left: 10px;
+  box-sizing: border-box;
+  max-width: 403px;
+  padding-left: 15px;
+  padding-right: 5px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  padding-bottom: 30px;
+  height: fit-content;
 }
 
-.company-name{
+.company-name {
   margin-top: 0;
   margin-bottom: 10px;
 }
 
-.company-name p{
+.company-name p {
   font-size: 36px;
   font-weight: 500;
-  color: #3E3939;
+  color: #3e3939;
   margin: 0;
 }
 
-.company-cover-letter p{
+.company-cover-letter p {
   font-size: 14px;
   font-weight: 400;
-  color:#7D8288;
+  color: #7d8288;
 }
 
-.company-industry{
+.company-industry {
   display: flex;
   width: fit-content;
   height: 31px;
-  background-color: rgba(222, 85, 52, 0.30) ;
+  background-color: rgba(222, 85, 52, 0.3);
   border: none;
   border-radius: 20px;
   padding: 5px 8px 5px 8px;
   align-items: center;
-  margin-bottom:10px
+  margin-bottom: 10px;
 }
 
-.company-industry p{
-  color :#FA4616;
+.company-industry p {
+  color: #fa4616;
   font-size: 14px;
   font-weight: 400;
   margin: 0;
 }
 
-.company-about{
+.company-about {
   margin-bottom: 10px;
 }
 
-.company-about b{
+.company-about b {
   font-size: 16px;
   font-weight: 500;
-  color: #3E3939;
+  color: #3e3939;
 }
 
-.company-about p{
+.company-about p {
   margin-bottom: 10px;
   font-size: 12px;
   font-weight: 400;
-  color:#7D8288;
+  color: #7d8288;
   max-height: 72px;
+}
+
+.company-allpic {
+  display: none;
+  box-sizing: border-box;
+  width: 100%;
+  height: 207px;
+  overflow-x: auto;
+  gap: 15px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  padding: 0 5px 0 2px;
+}
+
+.company-allpic::-webkit-scrollbar {
+  display: none;
+}
+
+.company-allpic .pic {
+  display: flex;
+  width: 268px;
+  height: 203px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.company-allpic .pic img {
+  width: 268px;
+  height: 203px;
+  object-fit: contain;
 }
 
 .company-contact {
@@ -155,30 +233,31 @@
   margin-bottom: 10px;
 }
 
-.company-contact b{
+.company-contact b {
   font-size: 16px;
   font-weight: 500;
-  color: #3E3939;
+  color: #3e3939;
 }
 
-.company-info{
-  display:flex;
-  color: #FA4616;
+.company-info {
+  display: flex;
+  color: #fa4616;
   align-items: center;
   column-gap: 10px;
 }
 
-.company-info p{
-  width:323px;
+.company-info p {
+  width: 323px;
   max-height: fit-content;
   margin: 5px 0;
-  color: #7D8288;
+  color: #7d8288;
 }
 
 .view-company-detail {
-  color:#FA4616;
+  color: #fa4616;
   text-decoration: underline;
   align-items: center;
+  height: fit-content;
 }
 
 .hide-button {
@@ -190,7 +269,7 @@
   width: 44px;
   height: 83px;
   border: none;
-  background-color: #FA4616;
+  background-color: #fa4616;
   font-size: 20px;
   color: white;
   align-items: center;
@@ -203,10 +282,11 @@
   display: flex;
   max-height: 100%;
   height: 100%;
-  width : 44px;
+  width: 44px;
   align-items: center;
   position: fixed;
   top: 56px;
+  z-index: 1;
 }
 
 .show-button {
@@ -218,11 +298,95 @@
   width: 44px;
   height: 83px;
   border: none;
-  background-color: #FA4616;
+  background-color: #fa4616;
   font-size: 20px;
   color: white;
   align-items: center;
   border-radius: 0 10px 10px 0;
   justify-content: center;
   cursor: pointer;
+}
+
+.sidebar-res-content {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-color: white;
+}
+
+@media only screen and (max-width: 431px) {
+  .sidebar {
+    display: none;
+  }
+
+  .h-sidebar {
+    display: none;
+  }
+
+  .sidebar-res {
+    display: flex !important;
+  }
+
+  .sidebar-res-content {
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.25);
+    background-color: white;
+    border-radius: 10px 10px 0px 0px;
+    position: relative;
+  }
+
+  .sidebar-res-header {
+    display: grid;
+    grid-template-rows: max-content max-content;
+    grid-template-columns: 100%;
+    height: fit-content;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    justify-content: center;
+  }
+
+  .dragedge {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: white;
+  }
+
+  .edge {
+    display: flex;
+  }
+
+  .sidebar-body {
+    height: 100%;
+    position: relative;
+  }
+
+  .btn {
+    box-sizing: border-box;
+    margin: 0 5px;
+    justify-content: space-between;
+    position: relative;
+    width: auto;
+  }
+
+  .expand-btn {
+    display: flex;
+  }
+
+  .company-allpic {
+    display: flex;
+  }
+
+  .sidebar_res-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar_res.visible {
+    .sidebar_res-content {
+      overflow-y: auto;
+    }
+  }
 }

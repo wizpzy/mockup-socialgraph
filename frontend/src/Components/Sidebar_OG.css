@@ -1,16 +1,17 @@
 /* Sidebar.css */
 
-.pdsidebar {
+.sidebar {
   position: absolute;
   left: 0;
   height: calc(100% - 56px);
+  /* top: 56px; */
   z-index: 1;
   display: grid;
   grid-template-columns: 423px 44px;
   cursor: auto;
 }
 
-.pdsidebar-content {
+.sidebar-content {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: white;
@@ -18,29 +19,28 @@
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
-.pdsidebar-content::-webkit-scrollbar {
+.sidebar-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.pdsidebar-content::-webkit-scrollbar-track {
+.sidebar-content::-webkit-scrollbar-track {
   background: #cecece;
 }
 
-.pdsidebar-content::-webkit-scrollbar-thumb {
+.sidebar-content::-webkit-scrollbar-thumb {
   background-color: #fa4616;
   border-radius: 20px;
 }
 
-.pdsidebar-header {
+.sidebar-header {
   display: flex;
   position: relative;
-  width: 100%;
-  height: 251px;
+  width:100%;
+  height: 320px;
   justify-content: start;
-  margin-bottom: 10px;
 }
 
-.pd-edge{
+.edge{
   display: none;
   width: 50px;
   height: 4px;
@@ -49,7 +49,7 @@
   transition: background 0.2s ease;
 }
 
-.pd-dragedge{
+.dragedge{
   display: none;
   align-items: center;
   justify-content:center;
@@ -57,14 +57,17 @@
   position: relative;
   width:100%;
   height: fit-content;
-  cursor: row-resize;
 }
 
-.pd-dragedge:hover .edge{
+.dragedge:hover .edge{
   background-color: #7d8288;
 }
 
-.pd-btn {
+.dragedge:active .edge{
+  background-color: #7d8288;
+}
+
+.btn {
   display: flex;
   width: 100%;
   height: fit-content;
@@ -72,7 +75,7 @@
   justify-content: end;
 }
 
-.pd-expand-btn {
+.expand-btn {
   display: none;
   border: none;
   background: rgba(255, 255, 255, 0.3);
@@ -83,7 +86,7 @@
   justify-content: center;
 }
 
-.pd-close-btn {
+.close-btn {
   border: none;
   background: rgba(255, 255, 255, 0.3);
   font-size: 30px;
@@ -94,46 +97,73 @@
   padding: auto;
 }
 
-.pdclose-btn:hover {
+.close-btn:hover {
   color: #666;
 }
 
-.pd-pic {
+.company-pic {
   width: 423px;
   height: 251px;
   background-color: #f6f4f4;
   border-bottom: 1px solid #ccc;
 }
 
-.pdcover-image {
+.company-logo {
+  display: flex;
+  position: absolute;
+  width: 137px;
+  height: 137px;
+  background-color: white;
+  border-radius: 100%;
+  align-self: end;
+  left: 0;
+  margin: 10px;
+  padding: 10px;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.cover-image {
   width: 100%;
   height: 100%;
 }
 
-.pdsidebar-body {
-  box-sizing: border-box;
+.logo-image {
+  width: 137px;
+  height: 137px;
+  object-fit: contain;
+}
+
+.sidebar-body {
   max-width: 403px;
   padding-left: 15px;
-  padding-right: 5px;
   display: flex;
   flex-direction: column;
   padding-bottom: 30px;
   height: fit-content;
 }
 
-.pd-name {
+.company-name {
   margin-top: 0;
   margin-bottom: 10px;
 }
 
-.pd-name p {
+.company-name p {
   font-size: 36px;
   font-weight: 500;
   color: #3e3939;
   margin: 0;
 }
 
-.pd-type {
+.company-cover-letter p {
+  font-size: 14px;
+  font-weight: 400;
+  color: #7d8288;
+}
+
+.company-industry {
   display: flex;
   width: fit-content;
   height: 31px;
@@ -145,24 +175,24 @@
   margin-bottom: 10px;
 }
 
-.pd-type p {
+.company-industry p {
   color: #fa4616;
   font-size: 14px;
   font-weight: 400;
   margin: 0;
 }
 
-.pd-about {
+.company-about {
   margin-bottom: 10px;
 }
 
-.pd-about b {
+.company-about b {
   font-size: 16px;
   font-weight: 500;
   color: #3e3939;
 }
 
-.pd-about p {
+.company-about p {
   margin-bottom: 10px;
   font-size: 12px;
   font-weight: 400;
@@ -170,46 +200,74 @@
   max-height: 72px;
 }
 
-.pd-allpic {
+.company-allpic {
   display: none;
-  box-sizing: border-box;
-  width: 100%;
-  height: 207px;
-  overflow-x: auto;
+  width: 403px;
+  max-width: 100%;
+  /* padding: 10px; */
+  height: 205px;
+  overflow-x: scroll;
   gap: 15px;
   margin-bottom: 10px;
   margin-right: 10px;
-  padding: 0 5px 0 2px;
 }
-.pd-allpic::-webkit-scrollbar {
+
+.company-allpic::-webkit-scrollbar {
   display: none;
 }
 
-.pd-allpic .pic {
+.company-allpic .pic {
   display: flex;
   width: 268px;
   height: 203px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  /* overflow: hidden; */
 }
 
-.pd-allpic .pic img{
+.company-allpic .pic img {
   width: 268px;
   height: 203px;
   object-fit: contain;
 }
 
-.view-pd-detail {
+.company-contact {
+  height: fit-content;
+  margin-bottom: 10px;
+}
+
+.company-contact b {
+  font-size: 16px;
+  font-weight: 500;
+  color: #3e3939;
+}
+
+.company-info {
+  display: flex;
+  color: #fa4616;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.company-info p {
+  width: 323px;
+  max-height: fit-content;
+  margin: 5px 0;
+  color: #7d8288;
+}
+
+.view-company-detail {
   color: #fa4616;
   text-decoration: underline;
   align-items: center;
+  height: fit-content;
 }
 
-.pdhide-button {
+.hide-button {
   align-self: center;
 }
 
-.pdhide-icon {
+.hide-icon {
   display: flex;
   width: 44px;
   height: 83px;
@@ -223,20 +281,22 @@
   cursor: pointer;
 }
 
-.pdh-sidebar {
+.h-sidebar {
   display: flex;
+  max-height: 100%;
   height: 100%;
   width: 44px;
   align-items: center;
-  position: absolute;
+  position: fixed;
   top: 56px;
+  z-index: 1;
 }
 
-.pdshow-button {
+.show-button {
   align-self: center;
 }
 
-.pdshow-icon {
+.show-icon {
   display: flex;
   width: 44px;
   height: 83px;
@@ -249,35 +309,25 @@
   justify-content: center;
   cursor: pointer;
 }
-.pdsidebar_res-content {
-  overflow-x: hidden;
-  overflow-y: hidden;
-  background-color: white;
-}
 
-@media only screen and (max-width:431px){
-  .pdsidebar{
-    display:none;
-  }
-
-  .pdh-sidebar{
-    display: none;
-  }
-
-  .pdsidebar_res{
-    display: flex !important;
-  }
-
-  .pdsidebar_res-content{
+@media only screen and (max-width: 431px) {
+  .sidebar {
+    display: flex;
     width: 100%;
-    height:100%;
-    box-shadow:  0 6px 6px 6px rgba(0, 0, 0, 0.25);
+    height: 100%;
+    justify-content: center;
+  }
+
+  .sidebar-content {
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.25);
     background-color: white;
     border-radius: 10px 10px 0px 0px;
     position: relative;
   }
 
-  .pdsidebar_res-header{
+  .sidebar-header {
     display: grid;
     grid-template-rows: max-content max-content;
     grid-template-columns: 100%;
@@ -289,7 +339,7 @@
     justify-content: center;
   }
 
-  .pd-dragedge{
+  .dragedge{
     display: flex;
     position: sticky;
     top:0;
@@ -297,16 +347,16 @@
     background-color: white;
   }
 
-  .pd-edge{
+  .edge{
     display: flex;
   }
 
-  .pd-sidebar-body{
+  .sidebar-body{
     height: 100%;
     position: relative;
   }
 
-  .pd-btn{
+  .btn {
     box-sizing: border-box;
     margin: 0 5px;
     justify-content: space-between;
@@ -314,21 +364,35 @@
     width: auto;
   }
 
-  .pd-expand-btn{
+  .expand-btn {
     display: flex;
   }
 
-  .pd-allpic {
-    display: flex;
-  }
-
-  .pdsidebar_res-content::-webkit-scrollbar {
+  .company-pic {
     display: none;
   }
 
-  .pdsidebar_res.visible {
-    .pdsidebar_res-content {
-      overflow-y: auto;
-    }
+  .company-logo {
+    display: none;
+  }
+
+  .company-allpic {
+    display: flex;
+  }
+
+  .sidebar-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-button {
+    display: none;
+  }
+
+  .show-button {
+    display: none;
+  }
+
+  .sidebar.expanded {
+    top: 80%;
   }
 }
