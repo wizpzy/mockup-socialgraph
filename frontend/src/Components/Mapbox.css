@@ -1,7 +1,6 @@
 .Mapbox {
-  /* margin-top: -56px; */
   height: calc(100% - 56px);
-} 
+}
 
 .Map-info {
   background-color: rgb(35 55 75 / 90%);
@@ -82,4 +81,8 @@
   height: fit-content;
   width:185px;
   padding: 0 !important;
+}
+
+.mapboxgl-ctrl{
+  display: none !important;
 }

@@ -1,34 +1,43 @@
-/* Header.css */
-
 .header {
+  display: flex;
+  box-sizing: border-box;
   background-color: #fa4616;
   width: 100%;
   height: 56px;
-  position: sticky; /* Ensure the header has a positioning context */
+  position: sticky; 
   top: 0px;
-  z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
-  align-content: center;
+  z-index: 1;
+  justify-content: center;
+  transition: height 0.3s;
+  align-content: flex-start;
 }
 
 .header-content {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1536px;
   align-items: center;
-  margin: 0 16px;
+  grid: 56px/ auto auto auto;
+  column-gap: auto;
+  justify-items: center;
 }
 
 .logo {
   height: 45px;
 }
 
-.header-filters {
-  display: flex;
-  width: 445px;
-  height: 30px;
-  gap: 15px;
+.filter-icon {
+  display: none;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+  justify-content: center;
 }
+
 .filter-dropdown {
-  width: 215px;
+  display: flex;
+  gap: 15px;
 }
 
 .react-select__menu-list::-webkit-scrollbar {
@@ -63,6 +72,7 @@
   font-size: 14px;
   font-weight: 400;
   color: white;
+  padding: 0;
 }
 
 .search-input::placeholder {
@@ -77,10 +87,10 @@
 }
 
 .search-icon {
-  right: 15px; /* Adjust icon position */
+  right: 15px; 
   cursor: pointer;
-  color: white; /* Adjust icon color */
-  font-size: 16px; /* Adjust icon size */
+  color: white; 
+  font-size: 16px; 
 }
 
 .companySuggestion {
@@ -90,7 +100,7 @@
   appearance: none;
   position: absolute;
   background-color: white;
-  top: 35px;
+  top: 40px;
   border-radius: 10px;
   border: none;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
@@ -116,164 +126,66 @@
   background-color: #f6f4f4;
 }
 
-@media only screen and (max-width: 431px) {
-  .header {
-    background-color: #fa4616;
-    width: 100%;
-    height: 88px;
-    position: sticky; /* Ensure the header has a positioning context */
-    top: 0px;
-    z-index: 1000; /* Adjust the z-index to ensure it is above other elements */
-    align-content: center;
-    overflow: hidden;
+@media only screen and (max-width: 1044px) {
+  .filter-icon {
+    display: block;
   }
+  .filter-dropdown {
+    display: none;
+  }
+
+  .header.expanded {
+      height: 100px;
+    .header-content{
+      grid: 56px 34px/ auto auto auto;
+      position: fixed;
+    }
+    .filter-dropdown.show {
+      display: flex;
+      grid-column-start: 1;
+      grid-column-end: 4;
+      z-index: -1;
+    }
+  }
+}
+
+@media only screen and (max-width: 629px) {
+  .search-input {
+    width: 200px;
+  }
+  .companySuggestion {
+    width: 246px;
+    top: 40px;
+  }
+  .filter-dropdown.show {
+      display: flex;
+    }
+}
+
+@media only screen and (max-width: 431px) {
   .logo {
     height: 28px;
   }
-
   .search-input {
-    border: none;
     height: 23px;
+    width: 145px;
+    font-size: 10px;
+  }
+  .companySuggestion {
     width: 191px;
-    background-color: transparent;
-    font-family: "Kanit", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: white;
-  }
-
-  .header-filters {
-    display: none;
-  }
-}
-
-/* .header {
-    background-color: #FA4616;
-    width: 100%;
-    height: 56px;
-    position: sticky; 
-    top:0px;
-    z-index: 1000; 
-    align-content: center;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 16px;
-}
-
-.logo {
-    height: 45px;
-}
-
-.header-filters {
-    display: flex;
-    width: 445px;
-    height: 30px;
-    gap: 15px;
-}
-
-
-.filter-dropdown {
-    padding: 5px 0 5px 10px;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-    width: 215px;
-    justify-content: start;
-    align-items: center;
-    display: flex;
-    font-family: "Poppins", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #FA4616;
-    background-color: white;
-}
-
-.filter-dropdown option {
-    appearance: none;
-    font-size: 13px;
-    font-weight: 400;
-    color: black;
-    font-family: "Kanit", sans-serif;
-    background-color: white !important;
-}
-
-.filter-dropdown option:hover,
-.filter-dropdown option:focus {
-    background-color: #F6F4F4 !important;
-}
-
-.header-search {
-    display: flex;
-    align-items: center;
-    background-color: #FCB19D;
-    border-radius: 20px;
-    padding: 0 10px;
-    gap:10px;
-    justify-content: center;
-}
-
-.search-input {
-    border: none;
-    height: 28px;
-    width:349px;
-    background-color: transparent;
-    font-family: "Kanit", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: white;
-}
-
-.search-input::placeholder{
-    color: white;
-}
-
-.search-input:focus-visible {
-    background-color: transparent;
-    border: transparent;
-    outline: transparent;
-    color:white;
-}
-
-.search-icon {
-    right: 15px; 
-    cursor: pointer;
-    color: white; 
-    font-size: 16px; 
-}
-
-.companySuggestion {
-    display: flex;
-    flex-direction: column;
-    width : 399px;
-    appearance: none;
-    position: absolute;
-    background-color: white;
     top: 35px;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-    justify-content: start;
-    overflow-x:hidden;
-    overflow-y: auto;
-    margin-top: 10px;
-    padding: 0;
-    max-height: 220px;
+  }
+  .companySuggestion li{
+      font-size: 11px;
+  }
+  .react-select__control{
+      width: 169px !important;
+      font-size: 12px !important;
+  }
+  .react-select__menu{
+      width: 169px !important;
+  }
+  .react-select__menu-list{
+      font-size: 12px !important;
+  }
 }
-
-.companySuggestion li {
-    padding: 5px;
-    display: flex;
-    font-size: 13px;
-    color:#FA4616;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-    background-color: white;
-}
-
-.companySuggestion li:hover{
-    background-color: #F6F4F4;
-} */

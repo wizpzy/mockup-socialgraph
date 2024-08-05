@@ -19,7 +19,7 @@ const App = () => {
   const [hasProductSidebar, setHasProductSidebar] = useState(false);
   const [isVisibleProductSidebar, setVisibleProductSidebar] = useState(false);
 
-  const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 });
+  const [location, setLocation] = useState({ lng: 100.4687611219814, lat: 13.659278378048691 }); // Default at Esic plus
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +40,7 @@ const App = () => {
     fetchData();
   }, []);
 
+  // Use in searching company
   const handleLocationSelect = (lng, lat) => {
     setLocation({ lng, lat });
   };
@@ -54,19 +55,6 @@ const App = () => {
         handleLocationSelect={handleLocationSelect}
         selectedProvince={selectedProvince}
         setSelectedProvince={setSelectedProvince}
-      />
-      <Mapbox
-        queryData={queryData}
-        selectedIndustry={selectedIndustry.value}
-        setSelectedIndustry={setSelectedIndustry}
-        selectedProvince={selectedProvince.value}
-        setSelectedCompany={setSelectedCompany}
-        setSelectedProduct={setSelectedProduct}
-        location={location}
-        setVisibleSidebar={setVisibleSidebar}
-        setHasSidebar={setHasSidebar}
-        setVisibleProductSidebar={setVisibleProductSidebar}
-        setHasProductSidebar={setHasProductSidebar}
       />
       {
         (
@@ -91,7 +79,19 @@ const App = () => {
           />
         )
       }
-      {/* <ProductSidebar/> */}
+      <Mapbox
+        queryData={queryData}
+        selectedIndustry={selectedIndustry.value}
+        setSelectedIndustry={setSelectedIndustry}
+        selectedProvince={selectedProvince.value}
+        setSelectedCompany={setSelectedCompany}
+        setSelectedProduct={setSelectedProduct}
+        location={location}
+        setVisibleSidebar={setVisibleSidebar}
+        setHasSidebar={setHasSidebar}
+        setVisibleProductSidebar={setVisibleProductSidebar}
+        setHasProductSidebar={setHasProductSidebar}
+      />
     </div>
   );
 };
