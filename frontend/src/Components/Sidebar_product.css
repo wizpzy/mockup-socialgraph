@@ -85,7 +85,7 @@
 
 .pd-close-btn {
   border: none;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0);
   font-size: 30px;
   cursor: pointer;
   color: #cecece;

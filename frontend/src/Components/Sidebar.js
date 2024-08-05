@@ -63,7 +63,7 @@ const Sidebar = ({ children, selectedCompany, isVisibleSidebar, setVisibleSideba
     <>
       <div className="company-name">
         <p>
-          {selectedCompany !== 0 && company
+          {selectedCompany !== 0 && company.attributes.Name
             ? company.attributes.Name
             : "company name"}
         </p>
@@ -92,13 +92,24 @@ const Sidebar = ({ children, selectedCompany, isVisibleSidebar, setVisibleSideba
                 "http://localhost:1337" +
                 company.attributes.Image.data.attributes.url
               }
+              alt="logo-image"
             />
           ) : (
-            <img src={LogoPic} />
+            <img src={LogoPic} alt="logo-image" />
           )}
         </div>
         <div className="pic">
-          <img src={CoverPic} />
+        {selectedCompany !== 0 && company.attributes.CoverImage.data ? (
+            <img
+              src={
+                "http://localhost:1337" +
+                company.attributes.CoverImage.data.attributes.url
+              }
+              alt="cover-image"
+            />
+          ) : (
+            <img src={CoverPic} alt="cover-image"/>
+          )}
         </div>
       </div>
 
@@ -107,9 +118,9 @@ const Sidebar = ({ children, selectedCompany, isVisibleSidebar, setVisibleSideba
         <div className="company-info">
           <MdLocalPhone />
           <p>
-            {selectedCompany !== 0 && company.attributes.Tel
-              ? company.attributes.Tel
-              : "Company Tel"}
+            {selectedCompany !== 0 && company.attributes.Phone
+              ? company.attributes.Phone
+              : "Company Tel."}
           </p>
         </div>
         <div className="company-info">

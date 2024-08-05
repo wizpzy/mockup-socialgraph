@@ -61,15 +61,21 @@ const ProductSidebar = ({ children, selectedCompany, selectedProduct, isVisibleP
         {/* <p>EatLab</p> */}
         <p>
           {
-            selectedProduct !== 0 && product ?
+            selectedProduct !== 0 && product.attributes.Name ?
               product.attributes.Name :
               "Product Name"
           }
         </p>
       </div>
       <div className="pd-type">
-        <p>Interactive Art</p>
-        {/* <p>{children.attributes.Category}</p> */}
+        {/* <p>Interactive Art</p> */}
+        <p>
+          {
+            selectedProduct !== 0 && product.attributes.Category.data ?
+              product.attributes.Category.data.attributes.Name :
+              "Product Category"
+          }
+        </p>
       </div>
       <div className="pd-about">
         <b>About</b>
@@ -79,7 +85,7 @@ const ProductSidebar = ({ children, selectedCompany, selectedProduct, isVisibleP
         }
         <p>
           {
-            selectedProduct !== 0 && product ?
+            selectedProduct !== 0 && product.attributes.Description ?
               product.attributes.Description :
               "Product Description"
           }
@@ -103,12 +109,18 @@ const ProductSidebar = ({ children, selectedCompany, selectedProduct, isVisibleP
                 </button>
               </div>
               <div className="pd-pic">
-                <img
-                  src={PDCoverPic}
-                  alt="pdcover-image"
-                  className="pdcover-image"
-                />
-                {/* <img src={children.attributes.Image} alt="cover-image" className="cover-image" /> */}
+                {selectedCompany !== 0 && product.attributes.CoverImage.data ? (
+                  <img
+                    src={
+                      "http://localhost:1337" +
+                      product.attributes.CoverImage.data.attributes.url
+                    }
+                    alt="pdcover-image"
+                    className="pdcover-image"
+                  />
+                ) : (
+                  <img src={PDCoverPic} alt="pdcover-image" />
+                )}
               </div>
             </div>
             <div className="pdsidebar-body">

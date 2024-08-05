@@ -15,7 +15,8 @@
     "Name": {
       "type": "string",
       "required": true,
-      "pluginOptions": {}
+      "pluginOptions": {},
+      "maxLength": 50
     },
     "Image": {
       "type": "media",
@@ -54,90 +55,30 @@
       "target": "api::industry.industry",
       "inversedBy": "Companies"
     },
-    "Activity": {
-      "type": "string"
-    },
     "Website": {
-      "type": "string"
-    },
-    "Juristic_ID": {
       "type": "string",
-      "unique": true
-    },
-    "Business": {
-      "type": "text"
-    },
-    "TSIC_Section": {
-      "type": "enumeration",
-      "enum": [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U"
-      ]
-    },
-    "Business_Type": {
-      "type": "enumeration",
-      "enum": [
-        "Service",
-        "Manufacture",
-        "Retail",
-        "Wholesale"
-      ]
-    },
-    "TSIC_Code": {
-      "type": "string"
-    },
-    "Business_Size": {
-      "type": "enumeration",
-      "enum": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    "TSIC_Name": {
-      "type": "string"
-    },
-    "TSIC_Code_FinancialSubmitted": {
-      "type": "string"
-    },
-    "TSIC_Name_FinancialSubmitted": {
-      "type": "string"
-    },
-    "Register_Date": {
-      "type": "date"
-    },
-    "Register_Capital": {
-      "type": "biginteger"
+      "maxLength": 100
     },
     "Address": {
       "type": "text"
     },
-    "Status": {
-      "type": "enumeration",
-      "enum": [
-        "Active",
-        "Inactive"
-      ],
-      "default": "Active"
+    "Phone": {
+      "type": "string",
+      "regex": "/^\\d+$/",
+      "required": false
+    },
+    "CoverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Email": {
+      "type": "email",
+      "required": false,
+      "maxLength": 50
     }
   }
 }

@@ -5,6 +5,7 @@ const queryObject_main = {
     Location: true,
     Industry: true,
     Image: true,
+    CoverImage: true,
     Projects: {
       filters: {
         Highlight_Flag: {
@@ -14,7 +15,9 @@ const queryObject_main = {
       populate: {
         Project: {
           populate: {
+            Category: true,
             Image: true,
+            CoverImage: true,
             Companies: {
               populate: {
                 Company: {

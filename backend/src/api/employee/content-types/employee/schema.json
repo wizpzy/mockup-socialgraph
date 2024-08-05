@@ -46,7 +46,8 @@
       "mappedBy": "Student"
     },
     "Email": {
-      "type": "email"
+      "type": "email",
+      "maxLength": 50
     },
     "Phone": {
       "type": "string"
