@@ -64,7 +64,6 @@
     },
     "Phone": {
       "type": "string",
-      "regex": "/^\\d+$/",
       "required": false
     },
     "CoverImage": {
