@@ -13,7 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "Name": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 50,
+      "required": true
     },
     "Companies": {
       "type": "relation",
